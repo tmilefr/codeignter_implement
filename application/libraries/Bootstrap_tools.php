@@ -59,6 +59,10 @@ Class Bootstrap_tools{
 		return $this->render_dropdown($id);
 	}
 	
+	public function render_menu_link($name){
+		echo '<li class="nav-item '.(($this->CI->router->class == $name ) ? 'active':'').'"><a class="nav-link" href="'.base_url().''.$name.'">'.$this->CI->lang->line($name).'<span class="sr-only">'.(($this->CI->router->class == $name) ? '(current)':'').'</span></a></li>';
+	}
+	
 	public function label($name){
 		echo '<label for="input'.$name.'">'.$this->CI->lang->line($name).'</label>';
 	}

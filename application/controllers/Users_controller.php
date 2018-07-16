@@ -13,6 +13,8 @@ class Users_controller extends MY_Controller {
 		$this->lang->load('users');
 		
 		$this->data_view['title'] = $this->title;
+		$this->data_view['can_search'] = true;
+		
 	}
 
 	public function index(){
@@ -22,15 +24,29 @@ class Users_controller extends MY_Controller {
 	public function edit($id = 0)
 	{
 		$this->load->helper('form');
+		$this->load->library('form_validation');
 		
-		if ($id){
+		/*$this->form_validation->set_rules('title', 'Title', 'required');
+		$this->form_validation->set_rules('text', 'Text', 'required');
+		if ($this->form_validation->run() === FALSE){
 			
-		}
-		$this->data_view['fields'] = $this->Users_model->_get('autorized_fields');
-		foreach($this->data_view['fields']  AS $field){
-			$this->data_view[$field] 	= $this->input->post($field);
-		}
+		}*/
 		
+		$this->data_view['fields'] = $this->Users_model->_get('autorized_fields');
+		$datas = array();
+		foreach($this->data_view['fields']  AS $field){
+			$datas[$field] 	= $this->input->post($field);
+		}
+		if (count($datas)){
+			if ($id){
+				$this->Users_model->_set('key_value',$id);	
+				$this->Users_model->_set('datas',$datas);
+				$this->Users_model->put();
+			} else {
+				$datas['id'] = $this->Users_model->post($datas);
+			}
+		}
+		$this->data_view['datas'] = $datas;
 		$this->load->view('template/head',		$this->data_view);
 		$this->load->view('edition/users_form',	$this->data_view);
 		$this->load->view('template/footer',	$this->data_view);	

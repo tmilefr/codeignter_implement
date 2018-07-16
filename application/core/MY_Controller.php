@@ -1,15 +1,31 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Super Class
+ *
+ * @package     WebApp
+ * @subpackage  Core
+ * @category    Factory
+ * @author      Tmile
+ * @link        http://24bis.com
+ */
 class MY_Controller extends CI_Controller {
 	
 	protected $data_view = array();
 	protected $_debug_array  = array();
 	protected $autorised_get_key = array('order','direction','filter','page','repertoire','search');
-	protected $controller_inprogress = null;
-	protected $method_inprogress = null;
-	protected $_debug = false;
+	protected $controller_inprogress = NULL;
+	protected $method_inprogress = NULL;
+	protected $_debug = FALSE;
 	
+	
+	/**
+	 * Generic Constructor
+	 *
+	 * @param       
+	 * @return      void()
+	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -23,7 +39,12 @@ class MY_Controller extends CI_Controller {
 		$this->data_view['footer_line'] = '';	
 		$this->data_view['can_search'] = false;
 	}
-	
+	/**
+	 * Generic Destructor
+	 *
+	 * @param       $this->_debug boolean
+	 * @return      void()
+	 */
 	function __destruct(){
 		if ($this->_debug)
 			$this->bootstrap_tools->render_debug($this->_debug_array);

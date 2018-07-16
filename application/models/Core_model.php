@@ -8,6 +8,7 @@ class Core_model extends CI_Model {
 	protected $order; 	//sort used in model
 	protected $direction;//direction used in model
 	protected $autorized_fields = array();
+	protected $autorized_fields_search = array();
 	protected $datas = array(); // datas in model
 	protected $filter = array();//filter for model
 	protected $per_page = 20;
@@ -15,6 +16,9 @@ class Core_model extends CI_Model {
 	protected $page = 1;
 	protected $nb = null;
 	protected $_debug_array = array();
+	protected $like = array();
+	protected $global_search = null;
+	
 	
 	function __construct()
 	{
@@ -42,7 +46,12 @@ class Core_model extends CI_Model {
 			foreach($this->filter AS $key => $value){
 				$this->db->where($key , $value);
 			}
-		} 		
+		} 	
+		if ($this->global_search){
+			foreach($this->autorized_fields_search AS $key => $value){
+				$this->db->or_like($value , $this->global_search);
+			}
+		} 			
 		$datas = $this->db->select(implode(',',$this->autorized_fields))
 					   ->order_by($this->order, $this->direction )
 					   ->get($this->table)
@@ -57,7 +66,12 @@ class Core_model extends CI_Model {
 				foreach($this->filter AS $key => $value){
 					$this->db->where($key , $value);
 				}
-			} 		
+			} 	
+			if ($this->global_search){
+				foreach($this->autorized_fields_search AS $key => $value){
+					$this->db->or_like($value , $this->global_search);
+				}
+			} 				
 			$datas = $this->db->select($this->key)
                            ->order_by($this->order, $this->direction )
                            ->get($this->table);
@@ -93,6 +107,7 @@ class Core_model extends CI_Model {
 			}
 		}*/
 		$this->db->insert($this->table, $datas);
+		return $this->db->insert_id();
 		$this->_debug_array[] = $this->db->last_query();
 	}
 
@@ -102,9 +117,16 @@ class Core_model extends CI_Model {
 				$this->db->where($key , $value);
 			}
 		} 
+		if ($this->global_search){
+			foreach($this->autorized_fields_search AS $key => $value){
+				$this->db->or_like($value , $this->global_search);
+			}
+		} 	
+		
 		if ($this->per_page){
 			$this->db->limit( $this->per_page , $this->page);
 		}
+
 		
         $datas = $this->db->select( ($this->autorized_fields ? implode(',',$this->autorized_fields) : '*' ) )
                            ->order_by($this->order, $this->direction )

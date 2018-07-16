@@ -19,15 +19,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item <?php echo (($this->router->class == 'home') ? 'active':'');?>">
-        <a class="nav-link" href="<?php echo base_url();?>">Home </a>
-      </li>
-      <li class="nav-item <?php echo (($this->router->class == 'users') ? 'active':'');?>">
-        <a class="nav-link" href="<?php echo base_url();?>users/"><?php echo Lang('Users');?><span class="sr-only"><?php echo (($this->router->class == 'users') ? '(current)':'');?></span></a>
-      </li>      
+		<?php
+		echo $this->bootstrap_tools->render_menu_link('home');
+		echo $this->bootstrap_tools->render_menu_link('users_controller');
+		?>
     </ul>
     <?php
     if ($can_search){

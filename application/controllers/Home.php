@@ -16,6 +16,8 @@ class Home extends MY_Controller {
 
 	public function index()
 	{
+		$this->bootstrap_tools->_set('base_url', base_url('home/index'));
+		
 		$this->data['content'] = '';
 		$this->load->view('template/head',		$this->data_view);
 		$this->load->view('home_page',			$this->data_view);
