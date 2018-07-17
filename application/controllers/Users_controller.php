@@ -78,6 +78,7 @@ class Users_controller extends MY_Controller {
 
 		$this->data_view['fields'] = $this->Users_model->_get('autorized_fields');
 		$this->data_view['datas'] = $this->Users_model->get();
+		
 		$this->load->view('template/head',	$this->data_view);
 		$this->load->view('list_view',		$this->data_view);
 		$this->load->view('template/footer',$this->data_view);	

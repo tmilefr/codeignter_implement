@@ -88,13 +88,13 @@ class Core_model extends CI_Model {
 		$this->_debug_array[] = $this->db->last_query();
 		return $datas;
 	}		
-
+	/* only one ? really ? */
 	function get_one()
 	{
-		$this->db->select(implode(',',$this->autorized_fields))
+		$this->db->select('*')
 				 ->from($this->table)
 				 ->where($this->key, $this->key_value);
-		$datas = $this->db->get();
+		$datas = $this->db->get()->result()->row();
 		$this->_debug_array[] = $this->db->last_query();
 		return $datas;
 	}
