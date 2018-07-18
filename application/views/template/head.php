@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-?><!doctype html>
+?>
+<!doctype html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -22,9 +23,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
 		<?php
-		echo $this->bootstrap_tools->render_menu_link('home');
-		echo $this->bootstrap_tools->render_menu_link('users_controller');
+		echo $this->bootstrap_tools->render_menu_link('home','oi-pie-chart');
+		echo $this->bootstrap_tools->render_menu_link('users','oi-people');
 		?>
+		<li class="nav-item"><?php echo $add_link;?></li>
     </ul>
     <?php
     if ($can_search){
@@ -32,10 +34,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		echo form_open($this->router->class.'/'.$this->router->method, $attributes);    
 		?>
 		  <input class="form-control mr-sm-2" type="search" name='global_search' id='global_search' placeholder="Search" aria-label="Search" value="<?php echo $this->session->userdata('global_search');?>">
-		  <button class="btn btn-outline-success my-2 my-sm-0 btn-sm" type="submit">Search</button>
+		  <button class="btn btn-outline-success my-2 my-sm-0 btn-sm" type="submit"><span class="oi oi-magnifying-glass"></span></button>
 		  <?php if ($this->session->userdata('global_search')){ ?>
 		  
-		  <a href='<?php echo base_url($this->router->class.'/'.$this->router->method);?>/search/reset' class='btn btn-outline-warning my-2 my-sm-0 btn-sm'>Reset</a>
+		  <a href='<?php echo base_url($this->router->class.'/'.$this->router->method);?>/search/reset' class='btn btn-outline-warning btn-sm'><span class="oi oi-circle-x"></span></a>
 		  <?php } ?>
 		</form>
 		<?php

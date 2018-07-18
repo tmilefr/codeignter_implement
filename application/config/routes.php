@@ -54,7 +54,8 @@ $route['404_override'] = 'errors/page_missing';
 $route['404_override'] = 'errors/page_missing';
 $route['translate_uri_dashes'] = FALSE;
 
-$route['users'] 		= 'users_controller/list';
+$route['users'] 			= 'users_controller/list';
 $route['users/list'] 		= 'users_controller/list';
-$route['users/edit/:num'] 	= 'users_controller/edit/$1';
+$route['users/edit/(:num)'] 	= "users_controller/edit/$1";
+$route['users/delete/(:num)'] = "users_controller/delete/$1";
 $route['users/add'] 		= 'users_controller/edit';

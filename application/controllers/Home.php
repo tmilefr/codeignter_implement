@@ -11,16 +11,12 @@ class Home extends MY_Controller {
 		$this->load->helper('url');
 		$this->data_view['title'] = $this->title;
 		$this->data_view['content'] = '<h1>Test</h1>';
-		
+		$this->_controller_name = 'home';
 	}
 
 	public function index()
 	{
-		$this->bootstrap_tools->_set('base_url', base_url('home/index'));
-		
-		$this->data['content'] = '';
-		$this->load->view('template/head',		$this->data_view);
-		$this->load->view('home_page',			$this->data_view);
-		$this->load->view('template/footer',	$this->data_view);		
+		$this->_set('view_inprogress','home_page');
+		$this->render_view();
 	}
 }

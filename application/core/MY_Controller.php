@@ -18,7 +18,8 @@ class MY_Controller extends CI_Controller {
 	protected $controller_inprogress = NULL;
 	protected $method_inprogress = NULL;
 	protected $_debug = FALSE;
-	
+	protected $_controller_name = null;
+	protected $view_inprogress = null;
 	
 	/**
 	 * Generic Constructor
@@ -38,6 +39,7 @@ class MY_Controller extends CI_Controller {
 		$this->data_view['title'] = $this->title;
 		$this->data_view['footer_line'] = '';	
 		$this->data_view['can_search'] = false;
+		$this->data_view['add_link'] = '';
 	}
 	/**
 	 * Generic Destructor
@@ -49,6 +51,16 @@ class MY_Controller extends CI_Controller {
 		if ($this->_debug)
 			$this->bootstrap_tools->render_debug($this->_debug_array);
 	}	
+	
+	function render_view(){
+		if ($this->input->is_ajax_request()){
+			$this->load->view($this->view_inprogress,		$this->data_view);
+		} else {
+			$this->load->view('template/head',	$this->data_view);
+			$this->load->view($this->view_inprogress,		$this->data_view);
+			$this->load->view('template/footer',$this->data_view);	
+		}
+	}
  
 	function _debug($msg){
 		$this->_debug_array[] = $msg;
