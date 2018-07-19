@@ -94,7 +94,7 @@ class Core_model extends CI_Model {
 		$this->db->select('*')
 				 ->from($this->table)
 				 ->where($this->key, $this->key_value);
-		$datas = $this->db->get()->result()->row();
+		$datas = $this->db->get()->row();
 		$this->_debug_array[] = $this->db->last_query();
 		return $datas;
 	}
@@ -138,13 +138,13 @@ class Core_model extends CI_Model {
 
 	function put()
 	{
-		foreach ($this->datas AS $key=>$fields){
-			if (!in_array($field, $this->$this->autorized_fields)){
+		foreach ($this->datas AS $field=>$data){
+			if (!in_array($field, $this->autorized_fields)){
 				unset($this->datas[$key]);
 			}
 		}
-		$this->db->where($this->key, $this->key_value)
-				 ->update($this->table, $this->datas);
+		$this->db->where($this->key, $this->key_value);
+		$this->db->update($this->table, $this->datas);		
 		$this->_debug_array[] = $this->db->last_query();
 	}
 

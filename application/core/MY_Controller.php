@@ -14,7 +14,7 @@ class MY_Controller extends CI_Controller {
 	
 	protected $data_view = array();
 	protected $_debug_array  = array();
-	protected $autorised_get_key = array('order','direction','filter','page','repertoire','search');
+	protected $autorised_get_key = array('order','direction','filter','page','repertoire','search','id');
 	protected $controller_inprogress = NULL;
 	protected $method_inprogress = NULL;
 	protected $_debug = FALSE;
@@ -34,7 +34,10 @@ class MY_Controller extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->helper('form');
 		$this->load->helper('language');
-		
+		$this->load->library('pagination');
+		$this->load->library('Render_object');
+		$this->load->library('form_validation');
+				
 		$this->process_url();
 		$this->data_view['title'] = $this->title;
 		$this->data_view['footer_line'] = '';	
@@ -93,7 +96,58 @@ class MY_Controller extends CI_Controller {
 			}
 		}
 	} 
+	public function delete($id = 0){
+		if ($id){
+			$this->{$this->_model_name}->_set('key_value',$id);
+			$this->{$this->_model_name}->delete();
+		}
+		redirect($this->_controller_name.'/list');
+	}
+	
+	public function edit($id = 0)
+	{		
+		$this->data_view['form_mod'] = 'add';
+		$this->data_view['id'] = '';
+		if ($id){
+			$this->render_object->_set('id',		$id);
+			$this->{$this->_model_name}->_set('key_value',$id);
+			$dba_data = $this->{$this->_model_name}->get_one();
+			$this->render_object->_set('dba_data',$dba_data);
+			$this->data_view['form_mod'] = 'edit';
+			$this->data_view['id'] = $id;
+		}
+		
+		//$this->form_validation->set_rules('passconf', 'Password Confirmation', 'trim|required|matches[password]');
+		if ($this->form_validation->run() === FALSE){
 
+
+		} else {
+			$datas = array();
+			foreach($this->{$this->_model_name}->_get('autorized_fields') AS $field){
+				$datas[$field] 	= $this->input->post($field);
+			}
+			if ($this->input->post('form_mod') == 'edit'){
+				if (isset($datas['id']) AND $id = $datas['id']){
+					$this->{$this->_model_name}->_set('key_value', $id);	
+					$this->{$this->_model_name}->_set('datas', $datas);
+					$this->{$this->_model_name}->put();
+				} 
+			} else if ($this->input->post('form_mod') == 'add'){
+				$datas['id'] = $this->{$this->_model_name}->post($datas);
+			}
+			redirect($this->_controller_name.'/list');
+		}			
+
+		
+		$this->_set('view_inprogress',$this->_edit_view);
+		$this->render_view();
+	}
+
+	public function index(){
+		redirect($this->_controller_name.'/list');
+	}
+
+	
 	public function _set($field,$value){
 		$this->$field = $value;
 	}
