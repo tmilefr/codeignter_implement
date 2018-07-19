@@ -2,12 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 Class Render_object{
 
-	protected $CI = null; //base controller 
-	protected $datamodel = null;
-	protected $id = null;
-	protected $elements = array();
-	protected $dba_data = null;
-	protected $_debug = FALSE;
+	protected $CI 		= NULL; //Controller instance 
+	protected $datamodel= NULL; //Name of datamodel
+	protected $id 		= NULL; //id of active element
+	protected $elements = ARRAY(); //all ORM object
+	protected $dba_data = NULL; //Data from DATABASE from id element
+	protected $_debug 	= FALSE;//Debug 
 	
 	public function __construct(){
 		$this->CI =& get_instance();
@@ -60,9 +60,11 @@ Class Render_object{
 	}
 	
 	function RenderElement($field,$value){
-		//echo '['.$field.'@'.$value.']';
 		switch($this->elements[$field]->type){
 			default:
+			case 'password':
+				return '*********';
+			break;
 			case 'input':
 				return $value;
 			break;

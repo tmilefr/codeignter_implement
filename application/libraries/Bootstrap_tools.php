@@ -2,8 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 Class Bootstrap_tools{
 
-	protected $datas_dropdown = array(); // items of datas 
 	protected $CI = null; //base controller 
+	protected $base_url = null;
 	
 	public function __construct(){
 		$this->CI =& get_instance();
@@ -18,23 +18,25 @@ Class Bootstrap_tools{
 	}	
 	
 	public function render_dropdown($id){
-		$filter = $this->CI->session->userdata('filter');
-		$direction = $this->CI->session->userdata('direction');
+		$filter 	= $this->CI->session->userdata('filter');
+		$direction 	= $this->CI->session->userdata('direction');
+		$defs 		= $this->CI->render_object->_get('elements');
+		
 		$add_string =  '';
 		if (isset($filter[$id])){
-			$add_string = '<span class="badge badge-success">'.$filter[$id].'</span>';
+			$add_string = '<span class="badge badge-success">'.$defs[$id]->values[$filter[$id]].'</span>';
 		}
 		//Basic LINK
-		$string_render_dropdown = '<div class="btn-group"><a class="nav-link " href="'.base_url().'/order/'.$id.'/direction/'.(($direction == 'desc') ? 'asc':'desc').'">'.$this->CI->lang->line($id).' '.$add_string.'</a>';
+		$string_render_dropdown = '<div class="btn-group"><a class="nav-link " href="'.$this->base_url.'/order/'.$id.'/direction/'.(($direction == 'desc') ? 'asc':'desc').'">'.$this->CI->lang->line($id).' '.$add_string.'</a>';
 		//DROPDOWN FILTER
-		if (isset($this->datas_dropdown[$id])){
+		if (isset($defs[$id]->values) AND count($defs[$id]->values)){
 			$string_render_dropdown .= '<ul class="navbar-nav mr-auto">
 			<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" id="navbarDropdownFrom" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
-				foreach($this->datas_dropdown[$id] AS $key => $value){
-					$string_render_dropdown .= '<a class="dropdown-item" href="'.base_url().'/filter/'.$id.'/filter_value/'.$value->{$id}.'">'.$this->CI->lang->line($value->{$id}).'</a>';
+				foreach($defs[$id]->values AS $key => $value){
+					$string_render_dropdown .= '<a class="dropdown-item" href="'.$this->base_url.'/filter/'.$id.'/filter_value/'.$key.'">'.$this->CI->lang->line($value).'</a>';
 				}
-				$string_render_dropdown .= '<a class="dropdown-item" href="'.base_url().'/filter/'.$id.'/filter_value/all">'.$this->CI->lang->line('All').'</a>';
+				$string_render_dropdown .= '<a class="dropdown-item" href="'.$this->base_url.'/filter/'.$id.'/filter_value/all">'.$this->CI->lang->line('All').'</a>';
 			$string_render_dropdown .= '</div>';
 		}
 		$string_render_dropdown .= '</div>';

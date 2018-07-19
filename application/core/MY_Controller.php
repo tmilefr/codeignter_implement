@@ -88,6 +88,7 @@ class MY_Controller extends CI_Controller {
 							$filtered[$value] = $array['filter_value'];
 						}
 						$this->session->set_userdata($field, $filtered );
+						
 					break;
 					default:
 						$this->session->set_userdata($field, $value );
@@ -102,6 +103,10 @@ class MY_Controller extends CI_Controller {
 			$this->{$this->_model_name}->delete();
 		}
 		redirect($this->_controller_name.'/list');
+	}
+	
+	public function add(){
+		$this->edit();
 	}
 	
 	public function edit($id = 0)
@@ -140,6 +145,33 @@ class MY_Controller extends CI_Controller {
 
 		
 		$this->_set('view_inprogress',$this->_edit_view);
+		$this->render_view();
+	}
+
+	public function list()
+	{
+		
+		$config = array();
+		$config['per_page'] 	= '20';
+		$config['base_url'] 	= $this->config->item('base_url').$this->_controller_name.'/list/page/';
+		$config['total_rows'] 	= $this->{$this->_model_name}->get_pagination();
+		$this->pagination->initialize($config);	
+		
+		$this->{$this->_model_name}->_set('global_search'	, $this->session->userdata('global_search'));
+		$this->{$this->_model_name}->_set('sort'			, $this->session->userdata('order'));
+		$this->{$this->_model_name}->_set('filter'			, $this->session->userdata('filter'));
+		$this->{$this->_model_name}->_set('direction'		, $this->session->userdata('direction'));
+		$this->{$this->_model_name}->_set('per_page'		, $config['per_page']);
+		$this->{$this->_model_name}->_set('page'			, $this->session->userdata('page'));
+		
+		$this->bootstrap_tools->_set('base_url', base_url($this->_controller_name.'/list'));
+		
+		//GET DATAS
+		$this->data_view['fields'] 	= $this->{$this->_model_name}->_get('autorized_fields');
+		$this->data_view['datas'] 	= $this->{$this->_model_name}->get();
+		$this->data_view['add_link']= '<a href="'.base_url($this->_controller_name.'/add').'" class="btn btn-outline-success btn-sm"><span class="oi oi-plus"></span> '.$this->lang->line('menu_add_'.$this->router->class).'</a>';
+		
+		$this->_set('view_inprogress','list_view');
 		$this->render_view();
 	}
 
