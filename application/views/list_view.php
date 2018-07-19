@@ -6,7 +6,7 @@
 			<th scope="col">&nbsp;</th>
 			<?php
 			foreach($fields AS $key=>$field){
-				echo '<th scope="col">'.$this->bootstrap_tools->render_link($field).'</a></th>';
+				echo '<th scope="col">'.$this->render_object->render_link($field).'</a></th>';
 			}
 			?>
 

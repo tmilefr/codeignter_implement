@@ -1,6 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+/**
+ * User Controller
+ *
+ * @package     WebApp
+ * @subpackage  Core
+ * @category    Factory
+ * @author      Tmile
+ * @link        http://www.24bis.com
+ */
 class Users_controller extends MY_Controller {
 
 	var $title = 'Users';
@@ -15,8 +23,8 @@ class Users_controller extends MY_Controller {
 		$this->_edit_view 		= 'edition/users_form';//template for editing
 		
 		$this->data_view['_controller_name'] = $this->_controller_name; 
-		$this->data_view['title'] = $this->title;
-		$this->data_view['can_search'] = true;
+		$this->data_view['title'] 			 = $this->title;
+		$this->data_view['can_search'] 		 = true;
 		
 		$this->render_object->_set('datamodel',	'Users_model'); //init render object ( "ORM" Object )
 		$this->render_object->create_elements();

@@ -1,14 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
 /**
- * Super Class
+ * MY_Controller
  *
  * @package     WebApp
  * @subpackage  Core
  * @category    Factory
  * @author      Tmile
- * @link        http://24bis.com
+ * @link        http://www.24bis.com
  */
 class MY_Controller extends CI_Controller {
 	

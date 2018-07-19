@@ -17,31 +17,19 @@ Class Bootstrap_tools{
 		return $this->$field;
 	}	
 	
-	public function render_dropdown($id){
-		$filter 	= $this->CI->session->userdata('filter');
-		$direction 	= $this->CI->session->userdata('direction');
-		$defs 		= $this->CI->render_object->_get('elements');
-		
-		$add_string =  '';
-		if (isset($filter[$id])){
-			$add_string = '<span class="badge badge-success">'.$defs[$id]->values[$filter[$id]].'</span>';
-		}
-		//Basic LINK
-		$string_render_dropdown = '<div class="btn-group"><a class="nav-link " href="'.$this->base_url.'/order/'.$id.'/direction/'.(($direction == 'desc') ? 'asc':'desc').'">'.$this->CI->lang->line($id).' '.$add_string.'</a>';
-		//DROPDOWN FILTER
-		if (isset($defs[$id]->values) AND count($defs[$id]->values)){
+	public function render_dropdown($field,$values){
+		$string_render_dropdown = '';
+		if (count($values)){
 			$string_render_dropdown .= '<ul class="navbar-nav mr-auto">
 			<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" id="navbarDropdownFrom" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
-				foreach($defs[$id]->values AS $key => $value){
-					$string_render_dropdown .= '<a class="dropdown-item" href="'.$this->base_url.'/filter/'.$id.'/filter_value/'.$key.'">'.$this->CI->lang->line($value).'</a>';
+				foreach($values AS $key => $value){
+					$string_render_dropdown .= '<a class="dropdown-item" href="'.$this->base_url.'/filter/'.$field.'/filter_value/'.$key.'">'.$this->CI->lang->line($value).'</a>';
 				}
-				$string_render_dropdown .= '<a class="dropdown-item" href="'.$this->base_url.'/filter/'.$id.'/filter_value/all">'.$this->CI->lang->line('All').'</a>';
-			$string_render_dropdown .= '</div>';
+				$string_render_dropdown .= '<a class="dropdown-item" href="'.$this->base_url.'/filter/'.$field.'/filter_value/all">'.$this->CI->lang->line('All').'</a>';
+			$string_render_dropdown .= '</div></ul>';
 		}
-		$string_render_dropdown .= '</div>';
 		return $string_render_dropdown;
-		
 	}	
 	
 	function render_debug($messages){
@@ -54,10 +42,6 @@ Class Bootstrap_tools{
 			}
 			echo '</table></div>';
 		}
-	}
-	
-	public function render_link($id){
-		return $this->render_dropdown($id);
 	}
 	
 	public function render_menu_link($name,$icon = null){

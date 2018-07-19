@@ -21,6 +21,20 @@ Class Render_object{
 		return $this->$field;
 	}	
 	
+	public function render_link($field){
+		$filter 	= $this->CI->session->userdata('filter');
+		$direction 	= $this->CI->session->userdata('direction');
+		$add_string =  '';
+		if (isset($filter[$field])){
+			$add_string = '<span class="badge badge-success">'.$elements[$id]->values[$filter[$field]].'</span>';
+		}
+		$string_render_dropdown = '<div class="btn-group"><a class="nav-link " href="'.$this->base_url.'/order/'.$id.'/direction/'.(($direction == 'desc') ? 'asc':'desc').'">'.$this->CI->lang->line($id).' '.$add_string.'</a>';
+		if (isset($elements[$id]->values[$filter[$field]])){
+			$string_render_dropdown .= $this->CI->bootstrap_tools->render_dropdown($field, $elements[$id]->values);
+		}
+		return $string_render_dropdown.'</div>';
+	}
+	
 	public function create_elements(){
 		$model = $this->CI->{$this->datamodel};
 		$hidden_form = array('form_mod'=>(($this->id) ? 'edit':'add'));
