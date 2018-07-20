@@ -17,16 +17,16 @@ Class Bootstrap_tools{
 		return $this->$field;
 	}	
 	
-	public function render_dropdown($field,$values){
+	public function render_dropdown($field,$values, $url){
 		$string_render_dropdown = '';
 		if (count($values)){
 			$string_render_dropdown .= '<ul class="navbar-nav mr-auto">
 			<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" id="navbarDropdownFrom" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
 				foreach($values AS $key => $value){
-					$string_render_dropdown .= '<a class="dropdown-item" href="'.$this->base_url.'/filter/'.$field.'/filter_value/'.$key.'">'.$this->CI->lang->line($value).'</a>';
+					$string_render_dropdown .= '<a class="dropdown-item" href="'.$url.'/filter/'.$field.'/filter_value/'.$key.'">'.$this->CI->lang->line($value).'</a>';
 				}
-				$string_render_dropdown .= '<a class="dropdown-item" href="'.$this->base_url.'/filter/'.$field.'/filter_value/all">'.$this->CI->lang->line('All').'</a>';
+				$string_render_dropdown .= '<a class="dropdown-item" href="'.$url.'/filter/'.$field.'/filter_value/all">'.$this->CI->lang->line('All').'</a>';
 			$string_render_dropdown .= '</div></ul>';
 		}
 		return $string_render_dropdown;
@@ -44,10 +44,10 @@ Class Bootstrap_tools{
 		}
 	}
 	
-	public function render_menu_link($name,$icon = null){
-		return  '<li class="nav-item '.(($this->CI->_get('_controller_name') == $name ) ? 'active':'').'"><a class="nav-link" href="'.base_url().''.$name.'">'.(($icon) ? '<span class="oi '.$icon.'"></span>':'').' '.$this->CI->lang->line($name).'<span class="sr-only">'.(($this->CI->_get('_controller_name') == $name) ? '(current)':'').'</span></a></li>';
+	public function render_head_link($field, $direction, $url, $add_string ){
+		return '<a class="nav-link " href="'.$url.'/order/'.$field.'/direction/'.(($direction == 'desc') ? 'asc':'desc').'">'.$this->CI->lang->line($field).' '.$add_string.'</a>';
 	}
-	
+
 	public function label($name){
 		return '<label for="input'.$name.'">'.$this->CI->lang->line($name).'</label>';
 	}

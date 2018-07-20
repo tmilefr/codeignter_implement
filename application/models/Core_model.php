@@ -88,6 +88,7 @@ class Core_model extends CI_Model {
 		$this->_debug_array[] = $this->db->last_query();
 		return $datas;
 	}		
+	
 	/* only one ? really ? */
 	function get_one()
 	{

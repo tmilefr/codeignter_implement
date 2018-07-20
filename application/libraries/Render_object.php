@@ -24,15 +24,19 @@ Class Render_object{
 	public function render_link($field){
 		$filter 	= $this->CI->session->userdata('filter');
 		$direction 	= $this->CI->session->userdata('direction');
+		
 		$add_string =  '';
 		if (isset($filter[$field])){
-			$add_string = '<span class="badge badge-success">'.$elements[$id]->values[$filter[$field]].'</span>';
+			$add_string = '<span class="badge badge-success">'.$this->elements[$field]->values[$filter[$field]].'</span>';
 		}
-		$string_render_dropdown = '<div class="btn-group"><a class="nav-link " href="'.$this->base_url.'/order/'.$id.'/direction/'.(($direction == 'desc') ? 'asc':'desc').'">'.$this->CI->lang->line($id).' '.$add_string.'</a>';
-		if (isset($elements[$id]->values[$filter[$field]])){
-			$string_render_dropdown .= $this->CI->bootstrap_tools->render_dropdown($field, $elements[$id]->values);
+		$string_render_link = '<div class="btn-group">';
+		
+		$string_render_link .= $this->CI->bootstrap_tools->render_head_link($field, $direction, $this->CI->_get('crud_url')->read, $add_string);
+		if (isset($this->elements[$field]->values)){
+			$string_render_link .= $this->CI->bootstrap_tools->render_dropdown($field, $this->elements[$field]->values, $this->CI->_get('crud_url')->read );
 		}
-		return $string_render_dropdown.'</div>';
+		$string_render_link .= '</div>';
+		return $string_render_link;
 	}
 	
 	public function create_elements(){

@@ -11,15 +11,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class MY_Controller extends CI_Controller {
 	
-	protected $data_view = array();
-	protected $_debug_array  = array();
-	protected $autorised_get_key = array('order','direction','filter','page','repertoire','search','id');
-	protected $controller_inprogress = NULL;
-	protected $method_inprogress = NULL;
-	protected $_debug = FALSE;
-	protected $_controller_name = null;
-	protected $view_inprogress = null;
-	
+	protected $autorised_get_key 	= array('order','direction','filter','page','repertoire','search','id');
+	protected $controller_inprogress= NULL;
+	protected $method_inprogress 	= NULL;
+	protected $_debug_array  		= array();
+	protected $_debug 				= FALSE;
+	protected $_controller_name 	= null;
+	protected $view_inprogress 		= null;
+	protected $data_view 			= array();
+	protected $crud_url	 			= null;
+			
 	/**
 	 * Generic Constructor
 	 *
@@ -29,20 +30,35 @@ class MY_Controller extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->library('bootstrap_tools');
+		
 		$this->load->helper('url');
 		$this->load->helper('form');
 		$this->load->helper('language');
 		$this->load->library('pagination');
 		$this->load->library('Render_object');
+		$this->load->library('bootstrap_tools');
 		$this->load->library('form_validation');
 				
 		$this->process_url();
-		$this->data_view['title'] = $this->title;
+		$this->data_view['title'] 		= $this->title;
 		$this->data_view['footer_line'] = '';	
-		$this->data_view['can_search'] = false;
-		$this->data_view['add_link'] = '';
+		$this->data_view['can_search'] 	= FALSE;
 	}
+	
+	 /**
+	 * Url Used in app
+	 *
+	 * @param       $this->_debug boolean
+	 * @return      void()
+	 */
+	public function _set_crud_url(){
+		$this->crud_url = new Stdclass();
+		$this->crud_url->create = base_url($this->_controller_name.'/add');
+		$this->crud_url->edit 	= base_url($this->_controller_name.'/edit');
+		$this->crud_url->read 	= base_url($this->_controller_name.'/list');
+		$this->crud_url->delete = base_url($this->_controller_name.'/delete');	
+	}
+	
 	/**
 	 * Generic Destructor
 	 *
@@ -54,16 +70,29 @@ class MY_Controller extends CI_Controller {
 			$this->bootstrap_tools->render_debug($this->_debug_array);
 	}	
 	
+	/**
+	 * RenderView
+	 *
+	 * @param       $this->view_inprogress
+	 * @param		$this->data_view
+	 * @return      void()
+	 */
 	function render_view(){
 		if ($this->input->is_ajax_request()){
-			$this->load->view($this->view_inprogress,		$this->data_view);
+			$this->load->view($this->view_inprogress,	$this->data_view);
 		} else {
-			$this->load->view('template/head',	$this->data_view);
-			$this->load->view($this->view_inprogress,		$this->data_view);
-			$this->load->view('template/footer',$this->data_view);	
+			$this->load->view('template/head',			$this->data_view);
+			$this->load->view($this->view_inprogress,	$this->data_view);
+			$this->load->view('template/footer',		$this->data_view);	
 		}
 	}
- 
+	/**
+	 * _debug : Set Debug Array
+	 *
+	 * @param       $this->_debug_array
+	 * @param		$msg (string)
+	 * @return      void()
+	 */
 	function _debug($msg){
 		$this->_debug_array[] = $msg;
 	}
@@ -101,7 +130,7 @@ class MY_Controller extends CI_Controller {
 			$this->{$this->_model_name}->_set('key_value',$id);
 			$this->{$this->_model_name}->delete();
 		}
-		redirect($this->_controller_name.'/list');
+		redirect($this->crud_url->read);
 	}
 	
 	public function add(){
@@ -139,7 +168,7 @@ class MY_Controller extends CI_Controller {
 			} else if ($this->input->post('form_mod') == 'add'){
 				$datas['id'] = $this->{$this->_model_name}->post($datas);
 			}
-			redirect($this->_controller_name.'/list');
+			redirect($this->crud_url->read);
 		}			
 
 		
@@ -163,19 +192,18 @@ class MY_Controller extends CI_Controller {
 		$this->{$this->_model_name}->_set('per_page'		, $config['per_page']);
 		$this->{$this->_model_name}->_set('page'			, $this->session->userdata('page'));
 		
-		$this->bootstrap_tools->_set('base_url', base_url($this->_controller_name.'/list'));
+		$this->bootstrap_tools->_set('base_url',$this->_get('crud_url')->read);
 		
 		//GET DATAS
 		$this->data_view['fields'] 	= $this->{$this->_model_name}->_get('autorized_fields');
 		$this->data_view['datas'] 	= $this->{$this->_model_name}->get();
-		$this->data_view['add_link']= '<a href="'.base_url($this->_controller_name.'/add').'" class="btn btn-outline-success btn-sm"><span class="oi oi-plus"></span> '.$this->lang->line('menu_add_'.$this->router->class).'</a>';
 		
 		$this->_set('view_inprogress','list_view');
 		$this->render_view();
 	}
 
 	public function index(){
-		redirect($this->_controller_name.'/list');
+		redirect($this->crud_url->read);
 	}
 
 	

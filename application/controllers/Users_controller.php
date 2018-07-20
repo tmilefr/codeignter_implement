@@ -15,12 +15,15 @@ class Users_controller extends MY_Controller {
 	
 	public function __construct(){
 		parent::__construct();
+		$this->_controller_name = 'users_controller';  //controller name for routing
+		$this->_model_name 		= 'Users_model';	   //DataModel
+		$this->_edit_view 		= 'edition/users_form';//template for editing
+		
+		$this->_set_crud_url();
+		$this->_set('_debug', TRUE);
+		
 		$this->load->model('Users_model');
 		$this->lang->load('users');
-
-		$this->_controller_name = 'users_controller'; //controller name for routing
-		$this->_model_name 		= 'Users_model';	  //DataModel
-		$this->_edit_view 		= 'edition/users_form';//template for editing
 		
 		$this->data_view['_controller_name'] = $this->_controller_name; 
 		$this->data_view['title'] 			 = $this->title;

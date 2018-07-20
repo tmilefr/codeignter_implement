@@ -16,7 +16,7 @@ class Users_model extends Core_model{
 	
 	function __construct(){
 		parent::__construct();
-		$this->_set('_debug',true);
+		$this->_set('_debug',FALSE);
 		
 		$this->defs['id'] 		=  ['type' => 'hidden','list'=>true];
 		$this->defs['name'] 	=  ['type' => 'input' ,'list'=>true,'rules'=>'trim|required|min_length[5]|max_length[12]'];
