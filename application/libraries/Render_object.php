@@ -22,8 +22,8 @@ Class Render_object{
 	}	
 	
 	public function render_link($field){
-		$filter 	= $this->CI->session->userdata('filter');
-		$direction 	= $this->CI->session->userdata('direction');
+		$filter 	= $this->CI->session->userdata($this->CI->set_ref_field('filter'));
+		$direction 	= $this->CI->session->userdata($this->CI->set_ref_field('direction'));
 		
 		$add_string =  '';
 		if (isset($filter[$field])){
@@ -68,8 +68,12 @@ Class Render_object{
 		}
 		
 		switch($this->elements[$field]->type){
+			default:
 			case 'input':
 				echo $this->CI->bootstrap_tools->input_text($field, $field, $value);
+			break;
+			case 'password':
+				echo $this->CI->bootstrap_tools->password_text($field, $field, $value);
 			break;
 			case 'select':
 				echo $this->CI->bootstrap_tools->input_select($field, $this->elements[$field]->values, $value);
@@ -79,15 +83,19 @@ Class Render_object{
 	
 	function RenderElement($field,$value){
 		switch($this->elements[$field]->type){
-			default:
 			case 'password':
 				return '*********';
 			break;
+			default:
 			case 'input':
 				return $value;
 			break;
 			case 'select':
-				return $this->elements[$field]->values[$value];
+				if (isset($this->elements[$field]->values[$value]))
+					return $this->elements[$field]->values[$value];
+				else
+					return 'indef';
+			
 			break;
 		}
 	}

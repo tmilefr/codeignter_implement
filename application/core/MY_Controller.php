@@ -11,15 +11,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class MY_Controller extends CI_Controller {
 	
-	protected $autorised_get_key 	= array('order','direction','filter','page','repertoire','search','id');
+	protected $autorised_get_key 	= array('order','direction','filter','page','repertoire','search','id'); //key in url
 	protected $controller_inprogress= NULL;
 	protected $method_inprogress 	= NULL;
 	protected $_debug_array  		= array();
-	protected $_debug 				= FALSE;
+	protected $_debug 				= TRUE;
 	protected $_controller_name 	= null;
 	protected $view_inprogress 		= null;
 	protected $data_view 			= array();
 	protected $crud_url	 			= null;
+	protected $title 				= 'SASGWA';
+	protected $slogan 				= 'Simple And Stupid Generic Web App';
 			
 	/**
 	 * Generic Constructor
@@ -41,8 +43,15 @@ class MY_Controller extends CI_Controller {
 				
 		$this->process_url();
 		$this->data_view['title'] 		= $this->title;
+		$this->data_view['slogan'] 		= $this->slogan;
 		$this->data_view['footer_line'] = '';	
 		$this->data_view['can_search'] 	= FALSE;
+		
+		$this->data_view['can_edit'] 	= FALSE;
+		$this->data_view['can_delete'] 	= FALSE;
+		$this->data_view['can_list'] 	= FALSE;
+		$this->data_view['global_search'] = $this->session->userdata($this->set_ref_field('global_search'));
+		
 	}
 	
 	 /**
@@ -66,8 +75,11 @@ class MY_Controller extends CI_Controller {
 	 * @return      void()
 	 */
 	function __destruct(){
-		if ($this->_debug)
+		if ($this->_debug){
 			$this->bootstrap_tools->render_debug($this->_debug_array);
+			
+		}
+		//echo '<pre><code>'.print_r($this->session->userdata() , 1).'</code></pre>';
 	}	
 	
 	/**
@@ -99,32 +111,37 @@ class MY_Controller extends CI_Controller {
  
 	public function process_url(){
 		if ($this->input->post('global_search')){
-			$this->session->set_userdata('global_search',$this->input->post('global_search'));
+			$this->session->set_userdata( $this->set_ref_field('global_search') ,$this->input->post('global_search'));
 		}
 		$array = $this->uri->uri_to_assoc(3);
 		foreach($array AS $field=>$value){
 			if (in_array($field,$this->autorised_get_key)){
 				switch($field){
 					case 'search':
-						$this->session->set_userdata('global_search','');
+						$this->session->set_userdata( $this->set_ref_field('global_search') ,'');
 					break;
 					case 'filter':
-						$filtered = $this->session->userdata('filter');
+						$filtered = $this->session->userdata( $this->set_ref_field('filter') );
 						if ($array['filter_value'] == 'all'){
 							unset($filtered[$value]);
 						} else {
 							$filtered[$value] = $array['filter_value'];
 						}
-						$this->session->set_userdata($field, $filtered );
+						$this->session->set_userdata( $this->set_ref_field('filter') , $filtered );
 						
 					break;
 					default:
-						$this->session->set_userdata($field, $value );
+						$this->session->set_userdata( $this->set_ref_field($field) , $value );
 					break;
 				}
 			}
 		}
 	} 
+	
+	public function set_ref_field($name){
+		return $name.'_'.$this->_controller_name;
+	}
+	
 	public function delete($id = 0){
 		if ($id){
 			$this->{$this->_model_name}->_set('key_value',$id);
@@ -185,18 +202,19 @@ class MY_Controller extends CI_Controller {
 		$config['total_rows'] 	= $this->{$this->_model_name}->get_pagination();
 		$this->pagination->initialize($config);	
 		
-		$this->{$this->_model_name}->_set('global_search'	, $this->session->userdata('global_search'));
-		$this->{$this->_model_name}->_set('sort'			, $this->session->userdata('order'));
-		$this->{$this->_model_name}->_set('filter'			, $this->session->userdata('filter'));
-		$this->{$this->_model_name}->_set('direction'		, $this->session->userdata('direction'));
+		$this->{$this->_model_name}->_set('global_search'	, $this->session->userdata($this->set_ref_field('global_search')));
+		$this->{$this->_model_name}->_set('order'			, $this->session->userdata($this->set_ref_field('order')));
+		$this->{$this->_model_name}->_set('filter'			, $this->session->userdata($this->set_ref_field('filter')));
+		$this->{$this->_model_name}->_set('direction'		, $this->session->userdata($this->set_ref_field('direction')));
 		$this->{$this->_model_name}->_set('per_page'		, $config['per_page']);
-		$this->{$this->_model_name}->_set('page'			, $this->session->userdata('page'));
+		$this->{$this->_model_name}->_set('page'			, $this->session->userdata($this->set_ref_field('page')));
 		
 		$this->bootstrap_tools->_set('base_url',$this->_get('crud_url')->read);
 		
 		//GET DATAS
 		$this->data_view['fields'] 	= $this->{$this->_model_name}->_get('autorized_fields');
 		$this->data_view['datas'] 	= $this->{$this->_model_name}->get();
+		
 		
 		$this->_set('view_inprogress','list_view');
 		$this->render_view();

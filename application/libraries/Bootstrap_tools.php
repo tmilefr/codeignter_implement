@@ -55,6 +55,10 @@ Class Bootstrap_tools{
 	public function input_text($name,$placeholder = '',$value = ''){
 		return '<input type="text" class="form-control" name="'.$name.'" id="input'.$name.'" placeholder="'.$placeholder.'" value="'.$value.'">';
 	}
+	public function password_text($name,$placeholder = '',$value = ''){
+		return '<input type="password" class="form-control" name="'.$name.'" id="input'.$name.'" placeholder="'.$placeholder.'" value="'.$value.'">';
+	}
+
 	
 	public function input_select($name, $values, $selected = ''){
 		$input_select = '<select id="input'.$name.'" name="'.$name.'" class="form-control">';

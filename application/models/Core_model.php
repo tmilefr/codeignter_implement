@@ -12,7 +12,7 @@ class Core_model extends CI_Model {
 	protected $datas = array(); // datas in model
 	protected $filter = array();//filter for model
 	protected $per_page = 20;
-	protected $_debug = false;
+	protected $_debug = FALSE;
 	protected $page = 1;
 	protected $nb = null;
 	protected $_debug_array = array();
@@ -69,7 +69,11 @@ class Core_model extends CI_Model {
 			} 	
 			if ($this->global_search){
 				foreach($this->autorized_fields_search AS $key => $value){
-					$this->db->or_like($value , $this->global_search);
+					if (!$key AND is_array($this->filter) AND count($this->filter)){
+						$this->db->like($value , $this->global_search);
+					} else {
+						$this->db->or_like($value , $this->global_search);
+					}
 				}
 			} 				
 			$datas = $this->db->select($this->key)
@@ -120,10 +124,13 @@ class Core_model extends CI_Model {
 		} 
 		if ($this->global_search){
 			foreach($this->autorized_fields_search AS $key => $value){
-				$this->db->or_like($value , $this->global_search);
+				if (!$key AND is_array($this->filter) AND count($this->filter)){
+					$this->db->like($value , $this->global_search);
+				} else {
+					$this->db->or_like($value , $this->global_search);
+				}
 			}
-		} 	
-		
+		} 				
 		if ($this->per_page){
 			$this->db->limit( $this->per_page , $this->page);
 		}
