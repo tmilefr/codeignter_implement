@@ -18,16 +18,25 @@ class Core_model extends CI_Model {
 	protected $_debug_array = array();
 	protected $like = array();
 	protected $global_search = null;
+	protected $defs = array();	
 	
-	
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 		$this->load->database();
 		
 	}
 	
-	function truncate(){
+	public function _init_def(){
+		$this->autorized_fields = array_keys($this->defs);
+		foreach($this->defs AS $field=>$def){
+			if ($def['search']){
+				$this->autorized_fields_search[] = $field;
+			}
+		}		
+	}
+	
+	public function truncate(){
 		$this->db->truncate($this->table);	
 	}	
 	
@@ -41,7 +50,7 @@ class Core_model extends CI_Model {
 			return false;			
 	}	
 
-	function get_all(){
+	public function get_all(){
 		if (is_array($this->filter) AND count($this->filter)){
 			foreach($this->filter AS $key => $value){
 				$this->db->where($key , $value);
@@ -60,7 +69,7 @@ class Core_model extends CI_Model {
 		return $datas;
 	}
 	
-	function get_pagination(){
+	public function get_pagination(){
 		if (!$this->nb){
 			if (is_array($this->filter) AND count($this->filter)){
 				foreach($this->filter AS $key => $value){
@@ -86,7 +95,7 @@ class Core_model extends CI_Model {
 	}	
 	
 	
-	function get_distinct($field){
+	public function get_distinct($field){
 		$this->db->distinct();
 		$datas = $this->db->select($field)->get($this->table)->result();
 		$this->_debug_array[] = $this->db->last_query();
@@ -94,7 +103,7 @@ class Core_model extends CI_Model {
 	}		
 	
 	/* only one ? really ? */
-	function get_one()
+	public function get_one()
 	{
 		$this->db->select('*')
 				 ->from($this->table)
@@ -104,7 +113,7 @@ class Core_model extends CI_Model {
 		return $datas;
 	}
 
-	function post($datas)
+	public function post($datas)
 	{
 		/*foreach ($datas AS $key=>$fields){
 			if (!in_array($field, $this->$this->autorized_fields)){
@@ -116,7 +125,7 @@ class Core_model extends CI_Model {
 		$this->_debug_array[] = $this->db->last_query();
 	}
 
-    function get(){
+    public function get(){
 		if (is_array($this->filter) AND count($this->filter)){
 			foreach($this->filter AS $key => $value){
 				$this->db->where($key , $value);
@@ -144,7 +153,7 @@ class Core_model extends CI_Model {
 		return $datas;
     }
 
-	function put()
+	public function put()
 	{
 		foreach ($this->datas AS $field=>$data){
 			if (!in_array($field, $this->autorized_fields)){
@@ -156,7 +165,7 @@ class Core_model extends CI_Model {
 		$this->_debug_array[] = $this->db->last_query();
 	}
 
-	function delete()
+	public function delete()
 	{
 		$this->db->where_in($this->key, $this->key_value)
 				 ->delete($this->table);
@@ -170,7 +179,7 @@ class Core_model extends CI_Model {
 		return $this->$field;
 	}
 	
-	function __destruct(){
+	public function __destruct(){
 		if ($this->_debug){
 			echo '<pre><code>'.print_r($this ,1).'</code></pre>';
 		}

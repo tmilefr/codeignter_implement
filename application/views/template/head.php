@@ -31,14 +31,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<a class="nav-link" href="<?php echo base_url();?>Home"><span class="oi oi-pie-chart"></span><?php echo Lang('Home');?></a>
 		</li>
 		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" href="<?php echo base_url();?>home" id="navbarDropdownUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<span class="oi oi-people"></span><?php echo Lang('User');?>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-				<a class="dropdown-item" href="<?php echo base_url();?>Users_controller"><?php echo Lang('list');?></a>
-				<a class="dropdown-item" href="<?php echo base_url();?>Users_controller/add"><?php echo Lang('add');?></a>
+				<a class="dropdown-item" href="<?php echo base_url('Users_controller/list');?>"><?php echo Lang('list');?></a>
+				<a class="dropdown-item" href="<?php echo base_url('Users_controller/add');?>"><?php echo Lang('add');?></a>
 			</div>
-		</li>		
+		</li>	
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<span class="oi oi-people"></span><?php echo Lang('Family');?>
+			</a>
+			<div class="dropdown-menu" aria-labelledby="navbarDropdownUser">
+				<a class="dropdown-item" href="<?php echo base_url('Family_controller/list');?>"><?php echo Lang('list');?></a>
+				<a class="dropdown-item" href="<?php echo base_url('Family_controller/add');?>"><?php echo Lang('add');?></a>
+			</div>
+		</li>			
     </ul>
    
     <?php

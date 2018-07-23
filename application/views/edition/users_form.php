@@ -1,5 +1,5 @@
 <?php
-echo form_open('users/add', array('class' => '', 'id' => 'edit') , array('form_mod'=>$form_mod,'id'=>$id) );
+echo form_open('Users_controller/add', array('class' => '', 'id' => 'edit') , array('form_mod'=>$form_mod,'id'=>$id) );
 
 echo form_error('name', 	'<div class="alert alert-danger">', '</div>');
 echo form_error('surname', 	'<div class="alert alert-danger">', '</div>');

@@ -20,3 +20,12 @@ CREATE TABLE `app`.`users` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+CREATE TABLE `app`.`family` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `adress` varchar(255) DEFAULT NULL,
+  `postalcode` varchar(255) DEFAULT NULL,
+  `town` varchar(255) DEFAULT NULL,
+  `country` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
