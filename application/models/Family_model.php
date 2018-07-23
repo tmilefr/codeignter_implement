@@ -15,7 +15,7 @@ class Family_model extends Core_model{
 		$this->_set('_debug',FALSE);
 		
 		$defs['id'] 		=  ['type' => 'hidden','list'=>true, 'search'=>false];
-		$defs['name'] 		=  ['type' => 'input' ,'list'=>true, 'search'=>true, 'rules'=>null];
+		$defs['name'] 		=  ['type' => 'input' ,'list'=>true, 'search'=>true, 'rules'=>'trim|required|min_length[5]|max_length[255]'];
 		$defs['adress'] 	=  ['type' => 'input' ,'list'=>true, 'search'=>true, 'rules'=>null];
 		$defs['postalcode']	=  ['type' => 'input' ,'list'=>true, 'search'=>true, 'rules'=>null]; 
 		$defs['town']		=  ['type' => 'input' ,'list'=>true, 'search'=>true, 'rules'=>null];

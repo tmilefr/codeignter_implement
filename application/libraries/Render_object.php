@@ -7,7 +7,7 @@ Class Render_object{
 	protected $id 		= NULL; //id of active element
 	protected $elements = ARRAY(); //all ORM object
 	protected $dba_data = NULL; //Data from DATABASE from id element
-	protected $_debug 	= FALSE;//Debug 
+	protected $_debug 	= TRUE;//Debug 
 	
 	public function __construct(){
 		$this->CI =& get_instance();
@@ -50,19 +50,31 @@ Class Render_object{
 			$elmt->name = $field;
 			$elmt->visible = $defs['list'];
 			$elmt->type = $defs['type'];
-			$elmt->values = ((isset($defs['values'])) ? $defs['values']:array());
 			$elmt->rules = ((isset($defs['rules'])) ? $defs['rules']:array());
 			$elmt->value = set_value($field);
+			
+			switch($defs['type']){
+				default:
+					$elmt->values = ((isset($defs['values'])) ? $defs['values']:array());
+				break;
+				case 'select_database':
+				    $execute = explode(':', $defs['values']);
+				    echo '$this->CI->{'.$execute[0].'}->{'.$execute[1].'};';
+				    
+					echo '<pre>'.print_r($this->CI->{$execute[0]}->{$execute[1]},1).'</pre>';
+				break;
+			}
+			
 			$this->elements[$field] = $elmt;			
 		}	
 	}
 	
 	function RenderFormElement($field){
 		$value = null;
-		if ($value === set_value($field)){
+		if ($value === set_value($field)){ //in first, POST data
 			
 		} else {
-			if (isset($this->dba_data)){
+			if (isset($this->dba_data)){ // try to check database
 				$value = $this->dba_data->{$field};
 			}
 		}
@@ -75,6 +87,7 @@ Class Render_object{
 			case 'password':
 				echo $this->CI->bootstrap_tools->password_text($field, $field, $value);
 			break;
+			case 'select_database':
 			case 'select':
 				echo $this->CI->bootstrap_tools->input_select($field, $this->elements[$field]->values, $value);
 			break;
@@ -90,6 +103,7 @@ Class Render_object{
 			case 'input':
 				return $value;
 			break;
+			case 'select_database':
 			case 'select':
 				if (isset($this->elements[$field]->values[$value]))
 					return $this->elements[$field]->values[$value];

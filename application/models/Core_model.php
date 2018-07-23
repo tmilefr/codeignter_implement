@@ -97,7 +97,7 @@ class Core_model extends CI_Model {
 	
 	public function get_distinct($field){
 		$this->db->distinct();
-		$datas = $this->db->select($field)->get($this->table)->result();
+		$datas = $this->db->select("$key,$field")->get($this->table)->result();
 		$this->_debug_array[] = $this->db->last_query();
 		return $datas;
 	}		
