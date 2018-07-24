@@ -19,7 +19,7 @@ class Users_model extends Core_model{
 		$defs['password']	=  ['type' => 'password',	'list'=>true, 'search'=>false,	'rules'=>'trim|required|min_length[8]'];
 		$defs['type'] 		=  ['type' => 'select',		'list'=>true, 'search'=>false,	'rules'=>null	,'values'=>array(1=>'famille',2=>'individuelle')];
 		$defs['section']	=  ['type' => 'select',		'list'=>true, 'search'=>false,	'rules'=>null	,'values'=>array(1=>'Motonautisme',2=>'Ski',3=>'Voile',4=>'Wake')];
-		$defs['family']		=  ['type' => 'select_database',		'list'=>true, 'search'=>false,	'rules'=>null	,'values'=>'Family_model:get_distinct("name")'];
+		$defs['family']		=  ['type' => 'select_database', 'list'=>true, 'search'=>false,	'rules'=>null	,'values'=>'distinct(family,id:name)'];
 		$this->_set('defs',$defs);
 		$this->_init_def();
 		

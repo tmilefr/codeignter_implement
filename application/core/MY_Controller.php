@@ -40,7 +40,9 @@ class MY_Controller extends CI_Controller {
 		$this->load->library('Render_object');
 		$this->load->library('bootstrap_tools');
 		$this->load->library('form_validation');
-				
+		
+		$this->load->model('GenericSql_model'); //model for render Object
+		
 		$this->process_url();
 		$this->data_view['title'] 		= $this->title;
 		$this->data_view['slogan'] 		= $this->slogan;

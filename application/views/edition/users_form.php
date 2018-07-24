@@ -7,18 +7,25 @@ echo form_error('email', 	'<div class="alert alert-danger">', '</div>');
 echo form_error('password', '<div class="alert alert-danger">', '</div>');
 echo form_error('type', 	'<div class="alert alert-danger">', '</div>');
 echo form_error('section', 	'<div class="alert alert-danger">', '</div>');
+echo form_error('family', 	'<div class="alert alert-danger">', '</div>');
 ?>
 <div class="form-row">
-	<div class="form-group col-md-6">
+	<div class="form-group col-md-4">
 		<?php 
 			echo $this->bootstrap_tools->label('name');
 			echo $this->render_object->RenderFormElement('name'); 
 		?>
 	</div>
-	<div class="form-group col-md-6">
+	<div class="form-group col-md-4">
 		<?php 
 			echo $this->bootstrap_tools->label('surname');
 			echo $this->render_object->RenderFormElement('surname');
+		?>
+	</div>
+	<div class="form-group col-md-4">
+		<?php 
+			echo $this->bootstrap_tools->label('family');
+			echo $this->render_object->RenderFormElement('family');
 		?>
 	</div>
 </div>

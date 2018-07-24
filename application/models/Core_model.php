@@ -26,6 +26,7 @@ class Core_model extends CI_Model {
 		$this->load->database();
 		
 	}
+
 	
 	public function _init_def(){
 		$this->autorized_fields = array_keys($this->defs);

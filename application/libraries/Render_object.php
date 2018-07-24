@@ -7,7 +7,7 @@ Class Render_object{
 	protected $id 		= NULL; //id of active element
 	protected $elements = ARRAY(); //all ORM object
 	protected $dba_data = NULL; //Data from DATABASE from id element
-	protected $_debug 	= TRUE;//Debug 
+	protected $_debug 	= FALSE;//Debug 
 	
 	public function __construct(){
 		$this->CI =& get_instance();
@@ -52,16 +52,19 @@ Class Render_object{
 			$elmt->type = $defs['type'];
 			$elmt->rules = ((isset($defs['rules'])) ? $defs['rules']:array());
 			$elmt->value = set_value($field);
-			
 			switch($defs['type']){
 				default:
 					$elmt->values = ((isset($defs['values'])) ? $defs['values']:array());
 				break;
 				case 'select_database':
-				    $execute = explode(':', $defs['values']);
-				    echo '$this->CI->{'.$execute[0].'}->{'.$execute[1].'};';
-				    
-					echo '<pre>'.print_r($this->CI->{$execute[0]}->{$execute[1]},1).'</pre>';
+				  preg_match('/(\w+)\((\w+)\,(\w+)\:(\w+)\)/', $defs['values'], $param);
+				  if (method_exists($this->CI->GenericSql_model,$param[1])){
+					  $datas = $this->CI->GenericSql_model->{$param[1]}($param[2],$param[3],$param[4]);
+				  } 
+				  foreach($datas AS $data){
+					$elmt->values[$data->{$param[3]}] = $data->{$param[4]};
+				  }
+				  
 				break;
 			}
 			
