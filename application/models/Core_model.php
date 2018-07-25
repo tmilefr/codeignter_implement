@@ -19,6 +19,8 @@ class Core_model extends CI_Model {
 	protected $like = array();
 	protected $global_search = null;
 	protected $defs = array();	
+	protected $json = null;
+	protected $json_path = APPPATH.'models/json/';
 	
 	public function __construct()
 	{
@@ -26,15 +28,18 @@ class Core_model extends CI_Model {
 		$this->load->database();
 		
 	}
-
 	
 	public function _init_def(){
-		$this->autorized_fields = array_keys($this->defs);
-		foreach($this->defs AS $field=>$def){
-			if ($def['search']){
+		$this->defs = array();
+		$json = file_get_contents($this->json_path.$this->json);
+		$json = json_decode($json);
+		foreach($json AS $field => $values){
+			$this->defs[$field] = $values;
+			$this->autorized_fields[]  = $field;
+			if ($values->search){
 				$this->autorized_fields_search[] = $field;
 			}
-		}		
+		}
 	}
 	
 	public function truncate(){

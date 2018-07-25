@@ -43,32 +43,40 @@ Class Render_object{
 		$model = $this->CI->{$this->datamodel};
 		$hidden_form = array('form_mod'=>(($this->id) ? 'edit':'add'));
 		foreach($model->_get('defs') AS $field=>$defs){
-			if (isset($defs['rules']) AND $defs['rules']){
-				$this->CI->form_validation->set_rules($field, $this->CI->lang->line($field) , $defs['rules']);
+			if (isset($defs->rules) AND $defs->rules){
+				$this->CI->form_validation->set_rules($field, $this->CI->lang->line($field) , $defs->rules);
 			}
-			$elmt = new StdClass();	
+			/*$elmt = new StdClass();	
 			$elmt->name = $field;
 			$elmt->visible = $defs['list'];
 			$elmt->type = $defs['type'];
-			$elmt->rules = ((isset($defs['rules'])) ? $defs['rules']:array());
-			$elmt->value = set_value($field);
-			switch($defs['type']){
+			$elmt->rules = ((isset($defs['rules'])) ? $defs['rules']:array());*/
+			$defs->value = set_value($field);
+			switch($defs->type){
 				default:
-					$elmt->values = ((isset($defs['values'])) ? $defs['values']:array());
+					$data = array();
+					if (isset($defs->values)){
+						foreach($defs->values AS $key=>$value){
+							$data[$key] = $value;
+						}
+					}
+					$defs->values = $data;
+						
 				break;
 				case 'select_database':
-				  preg_match('/(\w+)\((\w+)\,(\w+)\:(\w+)\)/', $defs['values'], $param);
+				  $datas_select = array();
+				  preg_match('/(\w+)\((\w+)\,(\w+)\:(\w+)\)/', $defs->values, $param);
 				  if (method_exists($this->CI->GenericSql_model,$param[1])){
 					  $datas = $this->CI->GenericSql_model->{$param[1]}($param[2],$param[3],$param[4]);
 				  } 
 				  foreach($datas AS $data){
-					$elmt->values[$data->{$param[3]}] = $data->{$param[4]};
+					$datas_select[$data->{$param[3]}] = $data->{$param[4]};
 				  }
-				  
+				  $defs->values = $datas_select;
 				break;
 			}
 			
-			$this->elements[$field] = $elmt;			
+			$this->elements[$field] = $defs;			
 		}	
 	}
 	

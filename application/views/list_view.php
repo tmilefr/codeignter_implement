@@ -5,7 +5,7 @@
 			<th scope="col">&nbsp;</th>
 			<?php
 			foreach($this->{$_model_name}->_get('defs') AS $field=>$defs){
-				if ($defs['list'] === true){
+				if ($defs->list === true){
 					echo '<th scope="col">'.$this->render_object->render_link($field).'</a></th>';
 				}
 			}
@@ -25,7 +25,7 @@
 		echo '</td>';	
 
 		foreach($this->{$_model_name}->_get('defs') AS $field=>$defs){
-			if ($defs['list'] === true){
+			if ($defs->list === true){
 				echo '<td>'.$this->render_object->RenderElement($field, $data->{$field}).'</td>';
 			}
 		}
