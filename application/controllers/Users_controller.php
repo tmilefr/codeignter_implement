@@ -13,9 +13,9 @@ class Users_controller extends MY_Controller {
 
 	public function __construct(){
 		
-		$this->_controller_name = 'users_controller';  //controller name for routing
+		$this->_controller_name = 'Users_controller';  //controller name for routing
 		$this->_model_name 		= 'Users_model';	   //DataModel
-		$this->_edit_view 		= 'edition/users_form';//template for editing
+		$this->_edit_view 		= 'edition/Users_form';//template for editing
 		parent::__construct();
 		$this->title .= ' - '.$this->lang->line($this->_controller_name);
 		

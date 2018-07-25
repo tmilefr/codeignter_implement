@@ -1,0 +1,48 @@
+{
+	"Users": [{
+			"name": "Name 1",
+			"surname": "Surname 1",
+			"email": "Email 1",
+			"password": "Password 1",
+			"type": 1,
+			"section":2,
+			"family":1
+		},
+		{
+			"name": "Name 2",
+			"surname": "Surname 2",
+			"email": "Email 2",
+			"password": "Password 2",
+			"type": 1,
+			"section":2,
+			"family":2
+		},
+		{
+			"name": "Name 3",
+			"surname": "Surname 3",
+			"email": "Email 3",
+			"password": "Password 3",
+			"type": 2,
+			"section":3,
+			"family":3
+		},
+		{
+			"name": "Name 4",
+			"surname": "Surname 4",
+			"email": "Email 4",
+			"password": "Password 4",
+			"type": 2,
+			"section":4,
+			"family":4
+		},
+		{
+			"name": "Name 5",
+			"surname": "Surname 5",
+			"email": "Email 5",
+			"password": "Password 5",
+			"type": 2,
+			"section":2,
+			"family":5
+		}
+	]
+}

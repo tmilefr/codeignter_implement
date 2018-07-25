@@ -36,6 +36,7 @@ class MY_Controller extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->helper('form');
 		$this->load->helper('language');
+		$this->load->helper('tools');
 		$this->load->library('pagination');
 		$this->load->library('Render_object');
 		$this->load->library('bootstrap_tools');
@@ -79,9 +80,7 @@ class MY_Controller extends CI_Controller {
 	function __destruct(){
 		if ($this->_debug){
 			$this->bootstrap_tools->render_debug($this->_debug_array);
-			
 		}
-		//echo '<pre><code>'.print_r($this->session->userdata() , 1).'</code></pre>';
 	}	
 	
 	/**

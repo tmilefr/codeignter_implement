@@ -7,9 +7,9 @@
 		"since": 1,
 		"dbforge": {
 			"type": "INT",
-			"constraint": "11",
-			"unsigned": "TRUE",
-			"auto_increment": "TRUE"
+			"constraint": 11,
+			"unsigned": true,
+			"auto_increment": true
 		}
 	},
 	"name": {

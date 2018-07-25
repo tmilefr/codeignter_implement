@@ -1,0 +1,38 @@
+{
+	"Family": [{
+			"name": "Family 1",
+			"adress": "Addresse 1",
+			"postalcode": "PostalCode 1",
+			"town": "Town 1",
+			"country": "FR"
+		},
+		{
+			"name": "Family 2",
+			"adress": "Addresse 2",
+			"postalcode": "PostalCode 2",
+			"town": "Town 2",
+			"country": "FR"
+		},
+		{
+			"name": "Family 3",
+			"adress": "Addresse 3",
+			"postalcode": "PostalCode 3",
+			"town": "Town 3",
+			"country": "FR"
+		},
+		{
+			"name": "Family 4",
+			"adress": "Addresse 4",
+			"postalcode": "PostalCode 4",
+			"town": "Town 4",
+			"country": "FR"
+		},
+		{
+			"name": "Family 5",
+			"adress": "Addresse 5",
+			"postalcode": "PostalCode 5",
+			"town": "Town 5",
+			"country": "FR"
+		}
+	]
+}

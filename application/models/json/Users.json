@@ -8,8 +8,8 @@
 		"dbforge": {
 			"type": "INT",
 			"constraint": "11",
-			"unsigned": "TRUE",
-			"auto_increment": "TRUE"
+			"unsigned": true,
+			"auto_increment": true
 		}
 	},
 	"name": {
@@ -36,7 +36,7 @@
 	},
 	"email": {
 		"type": "input",
-		"list": true,
+		"list": false,
 		"search": true,
 		"rules": "required",
 		"since": 1,
@@ -47,7 +47,7 @@
 	},
 	"password": {
 		"type": "password",
-		"list": true,
+		"list": false,
 		"search": false,
 		"rules": "trim|required|min_length[8]",
 		"since": 1,

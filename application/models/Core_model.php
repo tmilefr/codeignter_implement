@@ -30,8 +30,12 @@ class Core_model extends CI_Model {
 	}
 
 	public function distinct($table,$id,$value){
-		$this->db->distinct();
-		return $this->db->select("$id,$value")->get($table)->result();
+		try{
+			$this->db->distinct();
+			return $this->db->select("$id,$value")->get($table)->result();
+		} catch (Exception $e) {
+			//echo 'Exception reçue : ',  $e->getMessage(), "\n";
+		}
 	}	
 	
 	
