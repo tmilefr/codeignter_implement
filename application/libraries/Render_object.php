@@ -5,9 +5,9 @@ Class Render_object{
 	protected $CI 		= NULL; //Controller instance 
 	protected $datamodel= NULL; //Name of datamodel
 	protected $id 		= NULL; //id of active element
-	protected $elements = ARRAY(); //all ORM object
 	protected $dba_data = NULL; //Data from DATABASE from id element
 	protected $_debug 	= FALSE;//Debug 
+	protected $_model 	= FALSE;
 	
 	public function __construct(){
 		$this->CI =& get_instance();
@@ -27,56 +27,26 @@ Class Render_object{
 		
 		$add_string =  '';
 		if (isset($filter[$field])){
-			$add_string = '<span class="badge badge-success">'.$this->elements[$field]->values[$filter[$field]].'</span>';
+			$add_string = '<span class="badge badge-success">'.$this->_model->_get('defs')[$field]->values[$filter[$field]].'</span>';
 		}
 		$string_render_link = '<div class="btn-group">';
 		
 		$string_render_link .= $this->CI->bootstrap_tools->render_head_link($field, $direction, $this->CI->_get('crud_url')->read, $add_string);
-		if (isset($this->elements[$field]->values)){
-			$string_render_link .= $this->CI->bootstrap_tools->render_dropdown($field, $this->elements[$field]->values, $this->CI->_get('crud_url')->read );
+		if (isset($this->_model->_get('defs')[$field]->values)){
+			$string_render_link .= $this->CI->bootstrap_tools->render_dropdown($field, $this->_model->_get('defs')[$field]->values, $this->CI->_get('crud_url')->read );
 		}
 		$string_render_link .= '</div>';
 		return $string_render_link;
 	}
 	
 	public function create_elements(){
-		$model = $this->CI->{$this->datamodel};
+		$this->_model = $this->CI->{$this->datamodel};
+		
 		$hidden_form = array('form_mod'=>(($this->id) ? 'edit':'add'));
-		foreach($model->_get('defs') AS $field=>$defs){
+		foreach($this->_model->_get('defs') AS $field=>$defs){
 			if (isset($defs->rules) AND $defs->rules){
 				$this->CI->form_validation->set_rules($field, $this->CI->lang->line($field) , $defs->rules);
-			}
-			/*$elmt = new StdClass();	
-			$elmt->name = $field;
-			$elmt->visible = $defs['list'];
-			$elmt->type = $defs['type'];
-			$elmt->rules = ((isset($defs['rules'])) ? $defs['rules']:array());*/
-			$defs->value = set_value($field);
-			switch($defs->type){
-				default:
-					$data = array();
-					if (isset($defs->values)){
-						foreach($defs->values AS $key=>$value){
-							$data[$key] = $value;
-						}
-					}
-					$defs->values = $data;
-						
-				break;
-				case 'select_database':
-				  $datas_select = array();
-				  preg_match('/(\w+)\((\w+)\,(\w+)\:(\w+)\)/', $defs->values, $param);
-				  if (method_exists($this->CI->GenericSql_model,$param[1])){
-					  $datas = $this->CI->GenericSql_model->{$param[1]}($param[2],$param[3],$param[4]);
-				  } 
-				  foreach($datas AS $data){
-					$datas_select[$data->{$param[3]}] = $data->{$param[4]};
-				  }
-				  $defs->values = $datas_select;
-				break;
-			}
-			
-			$this->elements[$field] = $defs;			
+			}	
 		}	
 	}
 	
@@ -90,7 +60,7 @@ Class Render_object{
 			}
 		}
 		
-		switch($this->elements[$field]->type){
+		switch($this->_model->_get('defs')[$field]->type){
 			default:
 			case 'input':
 				echo $this->CI->bootstrap_tools->input_text($field, $field, $value);
@@ -100,13 +70,13 @@ Class Render_object{
 			break;
 			case 'select_database':
 			case 'select':
-				echo $this->CI->bootstrap_tools->input_select($field, $this->elements[$field]->values, $value);
+				echo $this->CI->bootstrap_tools->input_select($field, $this->_model->_get('defs')[$field]->values, $value);
 			break;
 		}
 	}
 	
 	function RenderElement($field,$value){
-		switch($this->elements[$field]->type){
+		switch($this->_model->_get('defs')[$field]->type){
 			case 'password':
 				return '*********';
 			break;
@@ -116,8 +86,8 @@ Class Render_object{
 			break;
 			case 'select_database':
 			case 'select':
-				if (isset($this->elements[$field]->values[$value]))
-					return $this->elements[$field]->values[$value];
+				if (isset($this->_model->_get('defs')[$field]->values[$value]))
+					return $this->_model->_get('defs')[$field]->values[$value];
 				else
 					return 'indef';
 			
@@ -125,14 +95,10 @@ Class Render_object{
 		}
 	}
 	
-	function get_fields(){
-		return array_keys($this->elements);
-	}
-
-	
 	public function __destruct(){
 		if ($this->_debug == TRUE){
 			unset($this->CI);
+			unset($this->_model);
 			echo '<pre><code>'.print_r($this , 1).'</code></pre>';
 		}
 	}

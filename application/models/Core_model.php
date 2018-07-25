@@ -28,17 +28,46 @@ class Core_model extends CI_Model {
 		$this->load->database();
 		
 	}
+
+	public function distinct($table,$id,$value){
+		$this->db->distinct();
+		return $this->db->select("$id,$value")->get($table)->result();
+	}	
+	
 	
 	public function _init_def(){
 		$this->defs = array();
 		$json = file_get_contents($this->json_path.$this->json);
 		$json = json_decode($json);
-		foreach($json AS $field => $values){
-			$this->defs[$field] = $values;
+		foreach($json AS $field => $defs){
 			$this->autorized_fields[]  = $field;
-			if ($values->search){
+			if ($defs->search){
 				$this->autorized_fields_search[] = $field;
 			}
+			switch($defs->type){
+				case 'select':
+					$data = array();
+					if (isset($defs->values)){
+						foreach($defs->values AS $key=>$value){
+							$data[$key] = $value;
+						}
+					}
+					$defs->values = $data;
+				break;
+				case 'select_database':
+				  $datas_select = array();
+				  preg_match('/(\w+)\((\w+)\,(\w+)\:(\w+)\)/', $defs->values, $param);
+				  if (method_exists($this,$param[1])){
+					  $datas = $this->{$param[1]}($param[2],$param[3],$param[4]);
+				  } 
+				  foreach($datas AS $data){
+					$datas_select[$data->{$param[3]}] = $data->{$param[4]};
+				  }
+				  $defs->values = $datas_select;
+				break;
+			}
+			
+			$this->defs[$field] = $defs;
 		}
 	}
 	
