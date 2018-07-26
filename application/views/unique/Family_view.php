@@ -14,13 +14,8 @@
 			?>
 		</p>
 		<?php
-		if ($can_delete)
-			echo '<a class="btn btn-danger" href="'.$ref_url->delete.'/'.$this->render_object->RenderElement('id').'"><span class="oi oi-circle-x"></span> </a> ';
-		if ($can_edit)
-			echo '<a class="btn btn-warning" href="'.$ref_url->edit.'/'.$this->render_object->RenderElement('id').'"><span class="oi oi-pencil"></span> </a> ';
-		if ($can_list)
-			echo '<a class="btn btn-success"href="'.$ref_url->read.'/'.$this->render_object->RenderElement('id').'"><span class="oi oi-spreadsheet"></span> </a>';		
-		?>
+			echo $this->render_object->render_element_menu();
+		?>	
 	  </div>
 	</div>	
 </div>
