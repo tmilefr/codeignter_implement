@@ -2,6 +2,8 @@
 	"Users": [{
 			"name": "Name 1",
 			"surname": "Surname 1",
+			"created":"2018-05-10 22:10:00",
+			"updated":"",			
 			"email": "Email 1",
 			"password": "Password 1",
 			"type": 1,
@@ -11,6 +13,8 @@
 		{
 			"name": "Name 2",
 			"surname": "Surname 2",
+			"created":"2018-06-10 22:10:00",
+			"updated":"",				
 			"email": "Email 2",
 			"password": "Password 2",
 			"type": 1,
@@ -20,6 +24,8 @@
 		{
 			"name": "Name 3",
 			"surname": "Surname 3",
+			"created":"2018-04-10 22:10:00",
+			"updated":"",				
 			"email": "Email 3",
 			"password": "Password 3",
 			"type": 2,
@@ -38,6 +44,8 @@
 		{
 			"name": "Name 5",
 			"surname": "Surname 5",
+			"created":"2018-02-10 22:10:00",
+			"updated":"",				
 			"email": "Email 5",
 			"password": "Password 5",
 			"type": 2,

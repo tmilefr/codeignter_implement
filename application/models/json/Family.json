@@ -71,5 +71,25 @@
 			"type": "VARCHAR",
 			"constraint": "255"
 		}
-	}	
+	},
+	"created": {
+		"type": "created",
+		"list": false,
+		"search": false,
+		"rules": null,
+		"since": 1,
+		"dbforge": {
+			"type": "DATETIME"
+		}
+	},
+	"updated": {
+		"type": "updated",
+		"list": false,
+		"search": false,
+		"rules": null,
+		"since": 1,
+		"dbforge": {
+			"type": "DATETIME"
+		}
+	}
 }

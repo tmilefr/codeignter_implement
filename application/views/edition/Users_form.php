@@ -1,3 +1,4 @@
+<div class="container-fluid">
 <?php
 echo form_open('Users_controller/add', array('class' => '', 'id' => 'edit') , array('form_mod'=>$form_mod,'id'=>$id) );
 
@@ -61,3 +62,4 @@ echo form_error('family', 	'<div class="alert alert-danger">', '</div>');
 <?php
 echo form_close();
 ?>
+</div>

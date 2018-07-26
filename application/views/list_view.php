@@ -18,10 +18,7 @@
 	foreach($datas AS $key => $data){
 		echo '<tr>';
 		echo '<td>';
-		if ($can_delete)
-			echo '<a href="'.base_url().$_controller_name.'/delete/'.$data->id.'"><span class="oi oi-circle-x"></span></a>';
-		if ($can_edit)
-			echo '<a href="'.base_url().$_controller_name.'/edit/'.$data->id.'"><span class="oi oi-pencil"></span></a>';
+			echo $this->render_object->render_element_menu($data);
 		echo '</td>';	
 
 		foreach($this->{$_model_name}->_get('defs') AS $field=>$defs){

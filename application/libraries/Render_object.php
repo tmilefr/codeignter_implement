@@ -21,6 +21,22 @@ Class Render_object{
 		return $this->$field;
 	}	
 	
+	public function render_element_menu($data = null){
+		if ($data){	
+			$key_value = $data->{$this->_model->_get('key')};
+		} else {
+			if (isset($this->dba_data)){ // try to check database
+				$key_value = $this->dba_data->{$this->_model->_get('key')};
+			}
+		}		
+		if ($this->CI->_get('_rules')['delete']->autorize)
+			echo $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['delete']->url 	, $key_value , 'oi-circle-x', 'btn-danger');		
+		if ($this->CI->_get('_rules')['edit']->autorize)
+			echo $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['edit']->url 	, $key_value , 'oi-pencil'	, 'btn-warning');	
+		if ($this->CI->_get('_rules')['view']->autorize)
+			echo $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['view']->url	, $key_value , 'oi-zoom-in'	, 'btn-success');	
+	}
+	
 	public function render_link($field){
 		$filter 	= $this->CI->session->userdata($this->CI->set_ref_field('filter'));
 		$direction 	= $this->CI->session->userdata($this->CI->set_ref_field('direction'));
@@ -31,15 +47,15 @@ Class Render_object{
 		}
 		$string_render_link = '<div class="btn-group">';
 		
-		$string_render_link .= $this->CI->bootstrap_tools->render_head_link($field, $direction, $this->CI->_get('crud_url')->read, $add_string);
+		$string_render_link .= $this->CI->bootstrap_tools->render_head_link($field, $direction, $this->CI->_get('_rules')['list']->url, $add_string);
 		if (isset($this->_model->_get('defs')[$field]->values)){
-			$string_render_link .= $this->CI->bootstrap_tools->render_dropdown($field, $this->_model->_get('defs')[$field]->values, $this->CI->_get('crud_url')->read );
+			$string_render_link .= $this->CI->bootstrap_tools->render_dropdown($field, $this->_model->_get('defs')[$field]->values, $this->CI->_get('_rules')['list']->url );
 		}
 		$string_render_link .= '</div>';
 		return $string_render_link;
 	}
 	
-	public function create_elements(){
+	public function Set_Rules_elements(){
 		$this->_model = $this->CI->{$this->datamodel};
 		
 		$hidden_form = array('form_mod'=>(($this->id) ? 'edit':'add'));
@@ -72,10 +88,22 @@ Class Render_object{
 			case 'select':
 				echo $this->CI->bootstrap_tools->input_select($field, $this->_model->_get('defs')[$field]->values, $value);
 			break;
+			case 'created':
+			
+			break;
+			case 'updated':
+			
+			break;
 		}
 	}
 	
-	function RenderElement($field,$value){
+	function RenderElement($field,$value = null){
+		if (!$value) {
+			if (isset($this->dba_data)){ // try to check database
+				$value = $this->dba_data->{$field};
+			}
+		}		
+			
 		switch($this->_model->_get('defs')[$field]->type){
 			case 'password':
 				return '*********';

@@ -3,8 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 Class Bootstrap_tools{
 
 	protected $CI = null; //base controller 
-	protected $base_url = null;
-	
+
 	public function __construct(){
 		$this->CI =& get_instance();
 	}
@@ -16,6 +15,10 @@ Class Bootstrap_tools{
 	public function _get($field){
 		return $this->$field;
 	}	
+	
+	public function render_icon_link($url,$id,$icon, $color){
+		return '<a class="btn btn-sm '.$color.'"  href="'.$url.'/'.$id.'"><span class="oi '.$icon.'"></span></a>&nbsp;';
+	}
 	
 	public function render_dropdown($field,$values, $url){
 		$string_render_dropdown = '';

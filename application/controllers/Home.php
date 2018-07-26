@@ -5,10 +5,11 @@ class Home extends MY_Controller {
 
 	
 	public function __construct(){
-		$this->_controller_name = 'Home';  //controller name for routing
 		parent::__construct();
+		$this->_controller_name = 'Home';  //controller name for routing
 		$this->title .= ' - '.$this->lang->line($this->_controller_name);
 		$this->data_view['content'] = '<h1> Test </h1>';
+		$this->init();
 	}
 
 	public function index()

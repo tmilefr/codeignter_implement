@@ -12,30 +12,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Family_controller extends MY_Controller {
 
 	public function __construct(){
+		parent::__construct();
 		
 		$this->_controller_name = 'Family_controller';  //controller name for routing
 		$this->_model_name 		= 'Family_model';	   //DataModel
 		$this->_edit_view 		= 'edition/Family_form';//template for editing
-		parent::__construct();
+		$this->_list_view		= 'unique/Family_view.php';
+		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true);
+		
+		
 		$this->title .= ' - '.$this->lang->line($this->_controller_name);
 		
-		$this->_set_crud_url();
 		$this->_set('_debug', TRUE);
+		$this->init();
 		
-		$this->load->model($this->_model_name);
-		$this->lang->load($this->_controller_name);
-		
-		$this->data_view['_controller_name'] = $this->_controller_name; 
-		$this->data_view['_model_name'] 	 = $this->_model_name; 
-		$this->data_view['title'] 			 = $this->title;
-		$this->data_view['can_search'] 		 = TRUE;
-		$this->data_view['can_edit'] 		 = TRUE;
-		$this->data_view['can_delete'] 		 = TRUE;
-	
-		
-		
-		$this->render_object->_set('datamodel',	$this->_model_name); //init render object ( "ORM" Object )
-		$this->render_object->create_elements();
 		
 	}
 

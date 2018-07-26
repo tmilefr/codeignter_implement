@@ -20,21 +20,11 @@ class Setup extends CI_Controller
 		else
 		{
 			echo 'The migration has concluded successfully.';
-			$this->LoadData('Family_data.json','Family_model','Family');
-			$this->LoadData('Users_data.json','Users_model','Users');
 		}
 		
 		
 	}
 	
-	public function LoadData($json,$model,$path){
-		$this->load->model($model);
-		$json = file_get_contents($this->json_path.$json);
-		$json = json_decode($json);
-		foreach($json->{$path} AS $family){
-			$this->{$model}->post($family);
-		}
-		
-	}	
+
 
 }

@@ -51,15 +51,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </ul>
    
     <?php
-    if ($can_search){
+    if ($search_object->autorize){
 		$attributes = array('class' => 'form-inline', 'id' => 'myform');
-		echo form_open($this->router->class.'/'.$this->router->method, $attributes);    
+		echo form_open($search_object->url, $attributes);    
 		?>
-		  <input class="form-control mr-sm-2" type="search" name='global_search' id='global_search' placeholder="Search" aria-label="Search" value="<?php echo $this->session->userdata('global_search');?>">
-		  <button class="btn btn-outline-success btn-sm" type="submit"><span class="oi oi-magnifying-glass"></span></button>
-		  <?php if ($this->session->userdata('global_search')){ ?>
-		  
-		  <a href='<?php echo base_url($this->router->class.'/'.$this->router->method);?>/search/reset' class='btn btn-outline-warning btn-sm'><span class="oi oi-circle-x"></span></a>
+		  <input class="form-control mr-sm-2" type="search" name='global_search' id='global_search' placeholder="Search" aria-label="Search" value="<?php echo $search_object->global_search;?>">
+		  <button class="btn btn-outline-success btn-sm" type="submit"><span class="oi oi-magnifying-glass"></span></button>&nbsp;
+		  <?php if ($search_object->global_search){ ?>
+		  <a href='<?php echo base_url($search_object->url);?>/search/reset' class='btn btn-outline-warning btn-sm'><span class="oi oi-circle-x"></span></a>
 		  <?php } ?>
 		</form>
 		<?php

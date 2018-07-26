@@ -12,16 +12,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class MY_Controller extends CI_Controller {
 	
 	protected $autorised_get_key 	= array('order','direction','filter','page','repertoire','search','id'); //key in url
-	protected $controller_inprogress= NULL;
-	protected $method_inprogress 	= NULL;
+	protected $_model_name			= false;
 	protected $_debug_array  		= array();
 	protected $_debug 				= TRUE;
 	protected $_controller_name 	= null;
 	protected $view_inprogress 		= null;
 	protected $data_view 			= array();
-	protected $crud_url	 			= null;
 	protected $title 				= 'SASGWA';
 	protected $slogan 				= 'Simple And Stupid Generic Web App';
+	protected $_rules				= null;
+	protected $_autorize			= array();
 			
 	/**
 	 * Generic Constructor
@@ -33,43 +33,50 @@ class MY_Controller extends CI_Controller {
 	{
 		parent::__construct();
 		
-		$this->load->helper('url');
-		$this->load->helper('form');
-		$this->load->helper('language');
 		$this->load->helper('tools');
-		$this->load->library('pagination');
 		$this->load->library('Render_object');
 		$this->load->library('bootstrap_tools');
-		$this->load->library('form_validation');
-		
-		$this->load->model('GenericSql_model'); //model for render Object
-		
+	}
+	
+	
+	function init(){
 		$this->process_url();
+		
 		$this->data_view['title'] 		= $this->title;
 		$this->data_view['slogan'] 		= $this->slogan;
 		$this->data_view['footer_line'] = '';	
-		$this->data_view['can_search'] 	= FALSE;
+		if ($this->_model_name){
+			$this->load->model($this->_model_name);
+			$this->data_view['_model_name'] = $this->_model_name;
+			$this->render_object->_set('datamodel',	$this->_model_name); 
+			$this->render_object->Set_Rules_elements();
+		}
+		if ($this->_controller_name)
+			$this->lang->load($this->_controller_name);
+
+
+
+		foreach($this->_autorize AS $key=>$value){
+			$this->_set_ui_rules($key , $value);
+		}
 		
-		$this->data_view['can_edit'] 	= FALSE;
-		$this->data_view['can_delete'] 	= FALSE;
-		$this->data_view['can_list'] 	= FALSE;
-		$this->data_view['global_search'] = $this->session->userdata($this->set_ref_field('global_search'));
-		
+		$search_object = new StdClass();
+		$search_object->url = $this->router->class.'/'.$this->router->method;
+		$search_object->global_search = $this->session->userdata($this->set_ref_field('global_search'));
+		$search_object->autorize = true;
+		$this->data_view['search_object'] = $search_object;
+	
 	}
 	
-	 /**
-	 * Url Used in app
-	 *
-	 * @param       $this->_debug boolean
-	 * @return      void()
-	 */
-	public function _set_crud_url(){
-		$this->crud_url = new Stdclass();
-		$this->crud_url->create = base_url($this->_controller_name.'/add');
-		$this->crud_url->edit 	= base_url($this->_controller_name.'/edit');
-		$this->crud_url->read 	= base_url($this->_controller_name.'/list');
-		$this->crud_url->delete = base_url($this->_controller_name.'/delete');	
+	
+	
+	function _set_ui_rules($key,$value){
+		$rules = new StdClass();
+		$rules->url =  base_url($this->_controller_name.'/'.$key);
+		$rules->autorize = $value;
+		$this->_rules[$key] = $rules;
 	}
+
 	
 	/**
 	 * Generic Destructor
@@ -148,15 +155,32 @@ class MY_Controller extends CI_Controller {
 			$this->{$this->_model_name}->_set('key_value',$id);
 			$this->{$this->_model_name}->delete();
 		}
-		redirect($this->crud_url->read);
+		redirect($this->_get('_rules')['list']->url);
 	}
 	
 	public function add(){
 		$this->edit();
 	}
 	
+	public function view($id){
+		if ($id){
+			$this->render_object->_set('id',		$id);
+			$this->{$this->_model_name}->_set('key_value',$id);
+			$dba_data = $this->{$this->_model_name}->get_one();
+			$this->render_object->_set('dba_data',$dba_data);
+		}	
+		$this->_set('view_inprogress',$this->_list_view);
+		$this->render_view();		
+		
+	}
+	
+	
 	public function edit($id = 0)
 	{		
+		
+		
+		
+		
 		$this->data_view['form_mod'] = 'add';
 		$this->data_view['id'] = '';
 		if ($id){
@@ -186,7 +210,7 @@ class MY_Controller extends CI_Controller {
 			} else if ($this->input->post('form_mod') == 'add'){
 				$datas['id'] = $this->{$this->_model_name}->post($datas);
 			}
-			redirect($this->crud_url->read);
+			redirect($this->_get('_rules')['list']->url);
 		}			
 
 		
@@ -210,8 +234,6 @@ class MY_Controller extends CI_Controller {
 		$this->{$this->_model_name}->_set('per_page'		, $config['per_page']);
 		$this->{$this->_model_name}->_set('page'			, $this->session->userdata($this->set_ref_field('page')));
 		
-		$this->bootstrap_tools->_set('base_url',$this->_get('crud_url')->read);
-		
 		//GET DATAS
 		$this->data_view['fields'] 	= $this->{$this->_model_name}->_get('autorized_fields');
 		$this->data_view['datas'] 	= $this->{$this->_model_name}->get();
@@ -222,7 +244,7 @@ class MY_Controller extends CI_Controller {
 	}
 
 	public function index(){
-		redirect($this->crud_url->read);
+		redirect($this->_get('_rules')['list']->url);
 	}
 
 	
