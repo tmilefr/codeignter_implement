@@ -8,7 +8,7 @@ class Home extends MY_Controller {
 		parent::__construct();
 		$this->_controller_name = 'Home';  //controller name for routing
 		$this->title .= ' - '.$this->lang->line($this->_controller_name);
-		$this->data_view['content'] = '<h1> Test </h1>';
+		$this->data_view['content'] = '<h1> Home </h1>';
 		$this->init();
 	}
 
