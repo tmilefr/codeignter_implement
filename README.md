@@ -19,9 +19,8 @@ Ce qu'il n'y a pas :
 
 Ce qu'il y a :
 
-Schéma JSON => Core DataModel => Core Controller => Objet de rendu => Vue.
-
-Des objets de rendu utilisable dans des vues
+- Schéma JSON => Core DataModel => Core Controller => Objet de rendu => Vue.
+- Des objets de rendu utilisable dans des vues
 
 ```
 codeignter_implement/
@@ -74,6 +73,7 @@ Changement de la config dans /application/config/database
 Adaptation du .htaccess et de la configuration $config['base_url']
 
 Lancement http://localhost/codeignter_implement/setup.
+
 Une application test avec un jeux de donnée de test est alors disponible.
 
 ### Documentation
@@ -85,13 +85,13 @@ class Users_controller extends MY_Controller {
 
 	public function __construct(){
 		parent::__construct();
-		$this->_controller_name = 'Users_controller';  		//controller name for routing
+		$this->_controller_name = 'Users_controller';		//controller name for routing
 		$this->_model_name 		= 'Users_model';	   		//DataModel
 		$this->_edit_view 		= 'edition/Users_form';		//Vue d'édition
 		$this->_list_view		= 'unique/Users_view.php';  //Vue de rendu d'un élément
 		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true); //Vue activée
 
-		$this->title .= ' - '.$this->lang->line($this->_controller_name); //pour spécialisé la page.
+		$this->title .= ' - '.$this->lang->line($this->_controller_name); //pour spécialiser la page.
 		$this->init(); //lancement.
 	}
 
