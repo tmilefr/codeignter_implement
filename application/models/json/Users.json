@@ -56,7 +56,7 @@
 	},	
 	"email": {
 		"type": "input",
-		"list": true,
+		"list": false,
 		"search": true,
 		"rules": "required",
 		"since": 1,

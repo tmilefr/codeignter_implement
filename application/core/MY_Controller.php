@@ -22,7 +22,9 @@ class MY_Controller extends CI_Controller {
 	protected $slogan 				= 'Simple And Stupid Generic Web App';
 	protected $_rules				= null;
 	protected $_autorize			= array();
-			
+	protected $json = null;
+	protected $json_path = APPPATH.'models/json/';
+					
 	/**
 	 * Generic Constructor
 	 *
@@ -32,12 +34,20 @@ class MY_Controller extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		
+		//$this->output->enable_profiler(TRUE);
 		$this->load->helper('tools');
 		$this->load->library('Render_object');
 		$this->load->library('bootstrap_tools');
 	}
 	
+	public function LoadJsonData($json,$model,$path){
+		$this->load->model($model);
+		$json = file_get_contents($this->json_path.$json);
+		$json = json_decode($json);
+		foreach($json->{$path} AS $family){
+			$this->{$model}->post($family);
+		}
+	}	
 	
 	function init(){
 		$this->process_url();
@@ -222,7 +232,7 @@ class MY_Controller extends CI_Controller {
 	{
 		
 		$config = array();
-		$config['per_page'] 	= '20';
+		$config['per_page'] 	= '10';
 		$config['base_url'] 	= $this->config->item('base_url').$this->_controller_name.'/list/page/';
 		$config['total_rows'] 	= $this->{$this->_model_name}->get_pagination();
 		$this->pagination->initialize($config);	

@@ -7,11 +7,14 @@
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item active">
+			<li class="nav-item">
 			<?php echo ((isset($this->pagination)) ? $this->pagination->create_links():'');?>
 			</li>
-			<li>
-
+			<li class="nav-item">
+				
+			</li>
+			<li class="nav-item">
+				<?php echo ((isset($this->pagination)) ? $this->pagination->create_perpage():'');?>
 			</li>
 			<li class="nav-item">
 			<?php echo $footer_line;?>

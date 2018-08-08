@@ -25,8 +25,12 @@ class Family_controller extends MY_Controller {
 		
 		$this->_set('_debug', TRUE);
 		$this->init();
-		
-		
 	}
+
+	function feeder(){
+		$this->LoadJsonData( 'Family_data.json', $this->_model_name, 'Family');
+	}
+
+	
 
 }
