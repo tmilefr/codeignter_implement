@@ -13,56 +13,81 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link rel="stylesheet" href="<?php echo base_url();?>assets/css/open-iconic-bootstrap.css">
      <!-- App CSS -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/css/app.css">   
-    <title><?php echo $title;?></title>
+    <title><?php echo $app_name;?></title>
   </head>
 <body>
-<p class="h2">
-	<?php echo $title;?> <small class="text-muted"><?php echo $slogan;?></small>
-</p>
-
-	
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-		<li class="nav-item">
-			<a class="nav-link" href="<?php echo base_url();?>Home"><span class="oi oi-pie-chart"></span><?php echo Lang('Home');?></a>
-		</li>
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<span class="oi oi-people"></span><?php echo Lang('User');?>
-			</a>
-			<div class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-				<a class="dropdown-item" href="<?php echo base_url('Users_controller/list');?>"><?php echo Lang('list');?></a>
-				<a class="dropdown-item" href="<?php echo base_url('Users_controller/add');?>"><?php echo Lang('add');?></a>
-			</div>
-		</li>	
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<span class="oi oi-people"></span><?php echo Lang('Family');?>
-			</a>
-			<div class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-				<a class="dropdown-item" href="<?php echo base_url('Family_controller/list');?>"><?php echo Lang('list');?></a>
-				<a class="dropdown-item" href="<?php echo base_url('Family_controller/add');?>"><?php echo Lang('add');?></a>
-			</div>
-		</li>			
-    </ul>
-   
-    <?php
-    if ($search_object->autorize){
-		$attributes = array('class' => 'form-inline', 'id' => 'myform');
-		echo form_open($search_object->url, $attributes);    
-		?>
-		  <input class="form-control mr-sm-2" type="search" name='global_search' id='global_search' placeholder="Search" aria-label="Search" value="<?php echo $search_object->global_search;?>">
-		  <button class="btn btn-outline-success btn-sm" type="submit"><span class="oi oi-magnifying-glass"></span></button>&nbsp;
-		  <?php if ($search_object->global_search){ ?>
-		  <a href='<?php echo base_url($search_object->url);?>/search/reset' class='btn btn-outline-warning btn-sm'><span class="oi oi-circle-x"></span></a>
-		  <?php } ?>
-		</form>
+<div id="wrapper" class="toggled">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a title="<?php echo $slogan;?>" class="navbar-brand" href="<?php echo base_url();?>Home"><?php echo $app_name;?> <small class="text-muted"></small></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a href="#menu-toggle" id="menu-toggle"><span class="navbar-toggler-icon"></span></a>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+				<div class="dropdown-menu">
+					<a class="dropdown-item" href="#">Action</a>
+					<a class="dropdown-item" href="#">Another action</a>
+					<a class="dropdown-item" href="#">Something else here</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" href="#">Separated link</a>
+				</div>
+			</li>
+		</ul>
+	   
 		<?php
-		}
-	?>
-  </div>
-</nav>
+		if ($search_object->autorize){
+			$attributes = array('class' => 'form-inline', 'id' => 'myform');
+			echo form_open($search_object->url, $attributes);    
+			?>
+			  <input class="form-control mr-sm-2" type="search" name='global_search' id='global_search' placeholder="Search" aria-label="Search" value="<?php echo $search_object->global_search;?>">
+			  <button class="btn btn-outline-success btn-sm" type="submit"><span class="oi oi-magnifying-glass"></span></button>&nbsp;
+			  <?php if ($search_object->global_search){ ?>
+			  <a href='<?php echo base_url($search_object->url);?>/search/reset' class='btn btn-outline-warning btn-sm'><span class="oi oi-circle-x"></span></a>
+			  <?php } ?>
+			</form>
+			<?php
+			}
+		?>
+      </div>
+    </nav>
+	<!-- Sidebar -->
+	<div id="sidebar-wrapper" class="bg-dark">
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+			<ul class="nav flex-column navbar-nav mr-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="<?php echo base_url('Users_controller/list');?>">
+						<span class="oi oi-people"></span> <?php echo Lang('User');?></span>
+					</a>
+				</li>	
+				<li class="nav-item">
+					<a class="nav-link" href="<?php echo base_url('Family_controller/list');?>">
+						<span class="oi oi-people"></span> <?php echo Lang('Family');?></span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+	<!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+			
+	
+	<div class="row">
+		<div class="col-4">
+			<h2><?php echo $title;?></h2>
+		</div>
+		<div class="col-4">
+			<?php 
+			if ($this->render_object->_get('_ui_rules')){ 
+				echo '<a href="'.$this->render_object->_get('_ui_rules')['add']->url.'">'.Lang('ADD').'</a>';
+			}
+			?>	
+		</div>
+	</div>	
+			
+			
+

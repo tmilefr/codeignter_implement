@@ -8,6 +8,8 @@ Class Render_object{
 	protected $dba_data = NULL; //Data from DATABASE from id element
 	protected $_debug 	= FALSE;//Debug 
 	protected $_model 	= FALSE;
+	protected $_ui_rules = FALSE;
+	
 	
 	public function __construct(){
 		$this->CI =& get_instance();

@@ -20,7 +20,7 @@ class Users_controller extends MY_Controller {
 		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true);
 		
 		
-		$this->title .= ' - '.$this->lang->line($this->_controller_name);
+		$this->title .= $this->lang->line($this->_controller_name);
 		
 		$this->_set('_debug', TRUE);
 		

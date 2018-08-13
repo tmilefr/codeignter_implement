@@ -18,8 +18,9 @@ class MY_Controller extends CI_Controller {
 	protected $_controller_name 	= null;
 	protected $view_inprogress 		= null;
 	protected $data_view 			= array();
-	protected $title 				= 'SASGWA';
+	protected $app_name				= 'SASGWA';
 	protected $slogan 				= 'Simple And Stupid Generic Web App';
+	protected $title 				= '';
 	protected $_rules				= null;
 	protected $_autorize			= array();
 	protected $json = null;
@@ -52,8 +53,10 @@ class MY_Controller extends CI_Controller {
 	function init(){
 		$this->process_url();
 		
-		$this->data_view['title'] 		= $this->title;
+		$this->data_view['app_name'] 	= $this->app_name;
 		$this->data_view['slogan'] 		= $this->slogan;
+		$this->data_view['title'] 		= $this->title;
+		
 		$this->data_view['footer_line'] = '';	
 		if ($this->_model_name){
 			$this->load->model($this->_model_name);
@@ -69,6 +72,8 @@ class MY_Controller extends CI_Controller {
 		foreach($this->_autorize AS $key=>$value){
 			$this->_set_ui_rules($key , $value);
 		}
+		//TODO : make 
+		$this->render_object->_set('_ui_rules' ,$this->_rules);
 		
 		$search_object = new StdClass();
 		$search_object->url = $this->router->class.'/'.$this->router->method;
@@ -98,6 +103,7 @@ class MY_Controller extends CI_Controller {
 		if ($this->_debug){
 			$this->bootstrap_tools->render_debug($this->_debug_array);
 		}
+		//echo '<pre><code>'.print_r($this , 1).'</code></pre>';
 	}	
 	
 	/**
@@ -187,10 +193,6 @@ class MY_Controller extends CI_Controller {
 	
 	public function edit($id = 0)
 	{		
-		
-		
-		
-		
 		$this->data_view['form_mod'] = 'add';
 		$this->data_view['id'] = '';
 		if ($id){

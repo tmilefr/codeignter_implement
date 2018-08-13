@@ -1,5 +1,5 @@
 <div class="container-fluid">
-	<table class="table table-sm">
+	<table class="table table-striped table-sm">
 	  <thead>
 		<tr>			
 			<th scope="col">&nbsp;</th>
