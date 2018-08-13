@@ -1,4 +1,3 @@
-<div class="container-fluid">
 	<div class="card">
 	  <div class="card-header">
 		<?php echo $this->render_object->RenderElement('name').' '.$this->render_object->RenderElement('surname');?> / <?php echo $this->render_object->RenderElement('family');?>
@@ -20,4 +19,3 @@
 		?>
 	  </div>
 	</div>	
-</div>
