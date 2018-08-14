@@ -1,6 +1,6 @@
 <div class="container-fluid">
 <?php
-echo form_open('Users_controller/add', array('class' => '', 'id' => 'edit') , array('form_mod'=>$form_mod,'id'=>$id) );
+echo form_open('Users_controller/'.$form_mod, array('class' => '', 'id' => 'edit') , array('form_mod'=>$form_mod,'id'=>$id) );
 
 echo form_error('name', 	'<div class="alert alert-danger">', '</div>');
 echo form_error('surname', 	'<div class="alert alert-danger">', '</div>');
@@ -58,7 +58,7 @@ echo form_error('family', 	'<div class="alert alert-danger">', '</div>');
 		?>
 	</div>
 </div>
-<button type="submit" class="btn btn-primary"><?php echo Lang($form_mod.'_'.$this->router->class);?></button>
+<button type="submit" class="btn btn-primary"><?php echo $this->render_object->_get('_ui_rules')[$form_mod]->name;?></button>
 <?php
 echo form_close();
 ?>

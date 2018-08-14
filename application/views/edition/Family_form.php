@@ -44,7 +44,7 @@ echo form_error('country', 	'<div class="alert alert-danger">', '</div>');
 		?>
 	</div>
 </div>
-<button type="submit" class="btn btn-primary"><?php echo Lang($form_mod.'_'.$this->router->class);?></button>
+<button type="submit" class="btn btn-primary"><?php echo $this->render_object->_get('_ui_rules')['add']->name;?></button>
 <?php
 echo form_close();
 ?>

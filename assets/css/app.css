@@ -37,8 +37,9 @@ body {
 	background:#f9f9f9;
 	min-height: 75rem;
 	padding-top: 56px;
-	overflow: hidden;		
+	overflow-x: hidden;		
 }
+
 
 /* ---------------------------------------------------
     SIDEBAR STYLE

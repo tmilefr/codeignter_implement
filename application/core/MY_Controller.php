@@ -104,7 +104,6 @@ class MY_Controller extends CI_Controller {
 		if ($this->_debug){
 			$this->bootstrap_tools->render_debug($this->_debug_array);
 		}
-		//echo '<pre><code>'.print_r($this , 1).'</code></pre>';
 	}	
 	
 	/**
