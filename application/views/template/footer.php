@@ -1,12 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			<ul class="navbar-nav mr-auto">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light"> 
+			<ul class="navbar-nav mr-auto"> 
 				<li class="nav-item">
 				<?php echo ((isset($this->pagination)) ? $this->pagination->create_links():'');?>
 				</li>
@@ -21,9 +16,11 @@
 				</li> 
 			</ul>
 			<span class="navbar-text">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></span>
-			</div>
 		</nav>
+
+
 	</div>
+</div>
 
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -34,8 +31,8 @@
     <!-- Menu Toggle Script -->
     <script>
     $("#menu-toggle").click(function(e) {
+        $('#sidebar').toggleClass('active');
         e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
     });
     </script>    
     

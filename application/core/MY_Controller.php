@@ -88,6 +88,7 @@ class MY_Controller extends CI_Controller {
 	function _set_ui_rules($key,$value){
 		$rules = new StdClass();
 		$rules->url =  base_url($this->_controller_name.'/'.$key);
+		$rules->name = $this->lang->line(strtoupper($key).'_'.$this->_controller_name);
 		$rules->autorize = $value;
 		$this->_rules[$key] = $rules;
 	}
