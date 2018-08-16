@@ -4,8 +4,42 @@ Class Bootstrap_tools{
 
 	protected $CI = null; //base controller 
 
+	protected $_head = array();
+
 	public function __construct(){
 		$this->CI =& get_instance();
+		$this->_SetHead('assets/js/jquery-3.3.1.min.js','js');
+		$this->_SetHead('assets/vendor/bootstrap/js/bootstrap.bundle.js','js');
+
+		$this->_SetHead('assets/vendor/bootstrap/css/bootstrap.min.css','css');
+		$this->_SetHead('assets/vendor/open-iconic/css/open-iconic-bootstrap.css','css');
+		$this->_SetHead('assets/css/app.css','css');
+		
+		/* plugins */
+		$this->_SetHead('assets/plugins/js/bootstrap-datepicker.js','js');
+		$this->_SetHead('assets/plugins/css/datepicker.css','css');		
+		
+		$this->_SetHead('assets/plugins/js/toggle_menu.js','js');
+		$this->_SetHead('assets/plugins/js/confirm.js','js');
+		
+	}
+	
+	function _SetHead($file,$type){
+		$this->_head[$type][$file] = $file;
+	}
+	
+	
+	function RenderAttachFiles($opt = 'js'){
+		foreach($this->_head[$opt] AS $file){
+			switch($opt){
+				case 'js':
+					echo  '<script src="'.base_url().$file.'"></script>'."\n";
+				break;
+				case 'css':
+					echo '<link rel="stylesheet" href="'.base_url().$file.'">'."\n";
+				break;
+			}
+		}
 	}
 	
 	public function _set($field,$value){
@@ -20,9 +54,10 @@ Class Bootstrap_tools{
 		return '<a class="btn btn-sm '.$color.'"  href="'.$url.'/'.$id.'"><span class="oi '.$icon.'"></span></a>&nbsp;';
 	}
 	
+	
 	public function render_dropdown($field,$values, $url){
 		$string_render_dropdown = '';
-		if (count($values)){
+		if (is_array($values) AND count($values)){
 			$string_render_dropdown .= '<ul class="navbar-nav mr-auto">
 			<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" id="navbarDropdownFrom" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
@@ -54,6 +89,28 @@ Class Bootstrap_tools{
 	public function label($name){
 		return '<label for="input'.$name.'">'.$this->CI->lang->line($name).'</label>';
 	}
+	
+	public function input_checkbox($field, $value){
+		
+		
+		return form_checkbox($field, 1 , $value , ' class="form-check-input" id="input'.$field.'" ');
+	}
+	
+	public function input_date($name,$value){
+		$this->_SetHead('assets/plugins/js/datepicker_start.js','js');
+		
+		if (!$value OR $value == '0000-00-00'){
+			$value = date('Y-m-d');
+		}
+		
+		echo '<div class="input-group">
+				  <input autocomplete="off" class="form-control datepicker" name="'.$name.'" id="input'.$name.'" value="'.$value.'" type="text">
+				  <div class="input-group-append">
+					 <span class="input-group-text"><span class="oi oi-calendar"></span></span>
+				  </div>
+			  </div>';
+	}
+	
 	
 	public function input_text($name,$placeholder = '',$value = ''){
 		return '<input type="text" class="form-control" name="'.$name.'" id="input'.$name.'" placeholder="'.$placeholder.'" value="'.$value.'">';

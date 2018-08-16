@@ -7,12 +7,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<!-- Required meta tags -->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<!-- Bootstrap CSS -->
-		<link rel="stylesheet" href="<?php echo base_url();?>assets/css/bootstrap.min.css">
-		<!-- iconic -->
-		<link rel="stylesheet" href="<?php echo base_url();?>assets/css/open-iconic-bootstrap.css">
-		 <!-- App CSS -->
-		<link rel="stylesheet" href="<?php echo base_url();?>assets/css/app.css">   
+		<?php $this->bootstrap_tools->RenderAttachFiles('css');?>
 		<title><?php echo $app_name;?></title>
 	</head>
 	<body>
@@ -29,10 +24,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="oi oi-cog"></span></a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="#"><?php echo Lang('Rates');?></a>
 						<a class="dropdown-item" href="#"><?php echo Lang('Parameter');?></a>
 						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="#"><?php echo Lang('About');?></a>
+						<a class="dropdown-item" href="#" data-toggle="modal" data-target="#AboutModal"><?php echo Lang('About');?></a>
 					</div>
 				</li>
 			</ul>
@@ -57,15 +51,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<nav class="navbar navbar-dark bg-dark">
 				<ul class="navbar-nav mr-auto flex-column">
 					<li class="nav-item">
+						<a class="nav-link" href="<?php echo base_url('Family_controller/list');?>">
+							<span class="oi oi-person"></span> <?php echo Lang('Family_controller');?></span>
+						</a>
+					</li>					
+					<li class="nav-item">
 						<a class="nav-link" href="<?php echo base_url('Users_controller/list');?>">
-							<span class="oi oi-person"></span> <?php echo Lang('User');?></span>
+							<span class="oi oi-person"></span> <?php echo Lang('Users_controller');?></span>
 						</a>
 					</li>	
-					<li class="nav-item">
-						<a class="nav-link" href="<?php echo base_url('Family_controller/list');?>">
-							<span class="oi oi-people"></span> <?php echo Lang('Family');?></span>
-						</a>
-					</li>
 				</ul>
 			</nav>	
 		</div>
@@ -79,8 +73,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					</li> 
 				</ul> 
 				<?php  
-				if ($this->render_object->_get('_ui_rules')){  
-				echo '<a href="'.$this->render_object->_get('_ui_rules')['add']->url.'"><span class="oi oi-plus"></span> '.$this->render_object->_get('_ui_rules')['add']->name.'</a>'; 
+				if ($this->render_object->_get('_ui_rules') AND !$this->render_object->_get('form_mod')){
+					
+					if ($this->render_object->_get('_ui_rules')['add']->autorize)
+						echo '<a class="btn btn-success" href="'.$this->render_object->_get('_ui_rules')['add']->url.'"><span class="oi oi-plus"></span> '.$this->render_object->_get('_ui_rules')['add']->name.'</a>'; 
+					if ($this->render_object->_get('_ui_rules')['update']->autorize)
+						echo '<a class="btn btn-success" href="'.$this->render_object->_get('_ui_rules')['update']->url.'"><span class="oi oi-reload"></span> '.$this->render_object->_get('_ui_rules')['update']->name.'</a>'; 
 				} 
 				?> 
 			</nav> 	

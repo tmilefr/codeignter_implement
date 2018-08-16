@@ -8,8 +8,8 @@ Class Render_object{
 	protected $dba_data = NULL; //Data from DATABASE from id element
 	protected $_debug 	= FALSE;//Debug 
 	protected $_model 	= FALSE;
-	protected $_ui_rules = FALSE;
-	
+	protected $_ui_rules= FALSE;
+	protected $form_mod = FALSE;
 	
 	public function __construct(){
 		$this->CI =& get_instance();
@@ -23,7 +23,12 @@ Class Render_object{
 		return $this->$field;
 	}	
 	
+	public function label($name){
+		return $this->CI->bootstrap_tools->label($name);
+	}	
+	
 	public function render_element_menu($data = null){
+		$element_menu = '';
 		if ($data){	
 			$key_value = $data->{$this->_model->_get('key')};
 		} else {
@@ -32,11 +37,12 @@ Class Render_object{
 			}
 		}		
 		if ($this->CI->_get('_rules')['delete']->autorize)
-			echo $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['delete']->url 	, $key_value , 'oi-circle-x', 'btn-danger');		
+			$element_menu .= $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['delete']->url 	, $key_value , 'oi-circle-x', 'btn-danger confirmModalLink');		
 		if ($this->CI->_get('_rules')['edit']->autorize)
-			echo $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['edit']->url 	, $key_value , 'oi-pencil'	, 'btn-warning');	
+			$element_menu .= $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['edit']->url 	, $key_value , 'oi-pencil'	, 'btn-warning');	
 		if ($this->CI->_get('_rules')['view']->autorize)
-			echo $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['view']->url	, $key_value , 'oi-zoom-in'	, 'btn-success');	
+			$element_menu .= $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['view']->url	, $key_value , 'oi-zoom-in'	, 'btn-success');	
+		return $element_menu;
 	}
 	
 	public function render_link($field){
@@ -90,11 +96,25 @@ Class Render_object{
 			case 'select':
 				echo $this->CI->bootstrap_tools->input_select($field, $this->_model->_get('defs')[$field]->values, $value);
 			break;
+			case 'date':
+				echo $this->CI->bootstrap_tools->input_date($field,$value);
+			break;
+			case 'checkbox':
+				echo $this->CI->bootstrap_tools->input_checkbox($field, $value);
+			break;
 			case 'created':
-			
+				if ($this->form_mod == 'edit'){
+					
+				} else {
+					echo form_hidden($field , date('Y-m-d h:i:s'));
+				}
 			break;
 			case 'updated':
-			
+				if ($this->form_mod == 'edit'){
+					echo form_hidden($field , date('Y-m-d h:i:s'));
+				} else {
+					
+				}
 			break;
 		}
 	}
@@ -113,6 +133,9 @@ Class Render_object{
 			default:
 			case 'input':
 				return $value;
+			break;
+			case 'checkbox':
+				return (($value) ? 'oui':'non');
 			break;
 			case 'select_database':
 			case 'select':

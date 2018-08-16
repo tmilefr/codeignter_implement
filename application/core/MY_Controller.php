@@ -18,8 +18,6 @@ class MY_Controller extends CI_Controller {
 	protected $_controller_name 	= null;
 	protected $view_inprogress 		= null;
 	protected $data_view 			= array();
-	protected $app_name				= 'SASGWA';
-	protected $slogan 				= 'Simple And Stupid Generic Web App';
 	protected $title 				= '';
 	protected $_rules				= null;
 	protected $_autorize			= array();
@@ -39,7 +37,12 @@ class MY_Controller extends CI_Controller {
 		$this->load->helper('tools');
 		$this->load->library('Render_object');
 		$this->load->library('bootstrap_tools');
+		$this->lang->load('traduction');
+		
+		$this->config->load('app');
 	}
+	
+	
 	
 	public function LoadJsonData($json,$model,$path){
 		$this->load->model($model);
@@ -53,8 +56,8 @@ class MY_Controller extends CI_Controller {
 	function init(){
 		$this->process_url();
 		
-		$this->data_view['app_name'] 	= $this->app_name;
-		$this->data_view['slogan'] 		= $this->slogan;
+		$this->data_view['app_name'] 	= $this->config->item('app_name'); 
+		$this->data_view['slogan'] 		= $this->config->item('slogan'); 
 		$this->data_view['title'] 		= $this->title;
 		
 		$this->data_view['footer_line'] = '';	
@@ -64,15 +67,11 @@ class MY_Controller extends CI_Controller {
 			$this->render_object->_set('datamodel',	$this->_model_name); 
 			$this->render_object->Set_Rules_elements();
 		}
-		if ($this->_controller_name)
-			$this->lang->load($this->_controller_name);
-
-
 
 		foreach($this->_autorize AS $key=>$value){
 			$this->_set_ui_rules($key , $value);
 		}
-		//TODO : make 
+		//to permit use it in view.
 		$this->render_object->_set('_ui_rules' ,$this->_rules);
 		
 		$search_object = new StdClass();
@@ -193,17 +192,23 @@ class MY_Controller extends CI_Controller {
 	
 	public function edit($id = 0)
 	{		
-		$this->data_view['form_mod'] = 'add';
+		$this->render_object->_set('form_mod', 'add');
 		$this->data_view['id'] = '';
+		//on form submit
+		if (!$id){
+			if ($this->input->post('id')){
+				$id = $this->input->post('id');
+			}
+		}		
+		
 		if ($id){
 			$this->render_object->_set('id',		$id);
 			$this->{$this->_model_name}->_set('key_value',$id);
 			$dba_data = $this->{$this->_model_name}->get_one();
 			$this->render_object->_set('dba_data',$dba_data);
-			$this->data_view['form_mod'] = 'edit';
+			$this->render_object->_set('form_mod', 'edit');
 			$this->data_view['id'] = $id;
 		}
-		
 		//$this->form_validation->set_rules('passconf', 'Password Confirmation', 'trim|required|matches[password]');
 		if ($this->form_validation->run() === FALSE){
 
@@ -251,7 +256,7 @@ class MY_Controller extends CI_Controller {
 		$this->data_view['datas'] 	= $this->{$this->_model_name}->get();
 		
 		
-		$this->_set('view_inprogress','list_view');
+		$this->_set('view_inprogress','unique/list_view');
 		$this->render_view();
 	}
 

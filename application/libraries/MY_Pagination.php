@@ -30,6 +30,8 @@ class MY_Pagination extends CI_Pagination {
 		{
 			return '';
 		}
+		
+		
 		$per_pages = [10,20,30,40,50];
 		
 		
