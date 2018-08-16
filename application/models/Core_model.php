@@ -166,11 +166,14 @@ class Core_model extends CI_Model {
 
     public function get(){
 		if (is_array($this->filter) AND count($this->filter)){
+			$this->db->group_start();
 			foreach($this->filter AS $key => $value){
 				$this->db->where($key , $value);
 			}
+			$this->db->group_end();
 		} 
 		if ($this->global_search){
+			$this->db->group_start();
 			foreach($this->autorized_fields_search AS $key => $value){
 				if (!$key AND is_array($this->filter) AND count($this->filter)){
 					$this->db->like($value , $this->global_search);
@@ -178,6 +181,7 @@ class Core_model extends CI_Model {
 					$this->db->or_like($value , $this->global_search);
 				}
 			}
+			$this->db->group_end();
 		} 				
 		if ($this->per_page){
 			$this->db->limit( $this->per_page , $this->page);
