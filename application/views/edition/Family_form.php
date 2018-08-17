@@ -1,6 +1,6 @@
 <div class="container-fluid">
 <?php
-echo form_open('Family_controller/add', array('class' => '', 'id' => 'edit') , array('form_mod'=>$form_mod,'id'=>$id) );
+echo form_open('Family_controller/'.$this->render_object->_get('form_mod'), array('class' => '', 'id' => 'edit') , array('form_mod'=>$this->render_object->_get('form_mod'),'id'=>$id) );
 
 echo form_error('name', 	'<div class="alert alert-danger">', '</div>');
 echo form_error('adress', 	'<div class="alert alert-danger">', '</div>');
@@ -44,7 +44,7 @@ echo form_error('country', 	'<div class="alert alert-danger">', '</div>');
 		?>
 	</div>
 </div>
-<button type="submit" class="btn btn-primary"><?php echo $this->render_object->_get('_ui_rules')['add']->name;?></button>
+<button type="submit" class="btn btn-primary"><?php echo $this->render_object->_get('_ui_rules')[$this->render_object->_get('form_mod')]->name;?></button>
 <?php
 echo form_close();
 ?>

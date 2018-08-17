@@ -19,8 +19,9 @@ Class Bootstrap_tools{
 		$this->_SetHead('assets/plugins/js/bootstrap-datepicker.js','js');
 		$this->_SetHead('assets/plugins/css/datepicker.css','css');		
 		
-		$this->_SetHead('assets/plugins/js/toggle_menu.js','js');
-		$this->_SetHead('assets/plugins/js/confirm.js','js');
+		/* UI TOOLS */
+		$this->_SetHead('assets/js/toggle_menu.js','js');
+		$this->_SetHead('assets/js/confirm.js','js');
 		
 	}
 	
@@ -97,18 +98,24 @@ Class Bootstrap_tools{
 	}
 	
 	public function input_date($name,$value){
-		$this->_SetHead('assets/plugins/js/datepicker_start.js','js');
+		$this->_SetHead('assets/js/datepicker_start.js','js');
 		
 		if (!$value OR $value == '0000-00-00'){
 			$value = date('Y-m-d');
 		}
 		
-		echo '<div class="input-group">
+		return '<div class="input-group">
 				  <input autocomplete="off" class="form-control datepicker" name="'.$name.'" id="input'.$name.'" value="'.$value.'" type="text">
 				  <div class="input-group-append">
 					 <span class="input-group-text"><span class="oi oi-calendar"></span></span>
 				  </div>
 			  </div>';
+	}
+	
+	public function input_typeahead($name,$value){
+		$this->_SetHead('assets/plugins/js/bootstrap3-typeahead.js','js');
+		
+		return '<input id="input'.$name.'" name="'.$name.'" class="typeahead form-control" value="'.$value.'">';
 	}
 	
 	

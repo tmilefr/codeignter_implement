@@ -1,4 +1,4 @@
-RewriteBase /codeignter_implement
+RewriteBase /dev/codeignter_implement
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

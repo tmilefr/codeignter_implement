@@ -12,4 +12,24 @@ class GenericSql_model extends CI_Model {
 		return $this->db->select("$id,$value")->get($table)->result();
 	}
 	
+	public function exec($sql){
+		try {
+			if ($this->db->query($sql)){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception $e) {
+			return  'Exception reçue : '. $e->getMessage(). "\n";
+		}
+	}
+	
+	public function get($table,$order,$direction ){
+		$datas = $this->db->select('*')
+                           ->order_by($this->order, $this->direction )
+                           ->get($table)
+						   ->result();
+		return $data;
+	}
+	
 }
