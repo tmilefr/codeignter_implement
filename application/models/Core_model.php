@@ -113,8 +113,12 @@ class Core_model extends CI_Model {
 		} 			
 		$datas = $this->db->select(implode(',',$this->autorized_fields))
 					   ->order_by($this->order, $this->direction )
-					   ->get($this->table)
-					   ->result();
+					   ->get($this->table);
+		if ($datas->num_rows() > 0){
+			return $datas->result();
+		} else {
+			return false;
+		}			   
 		$this->_debug_array[] = $this->db->last_query();
 		return $datas;
 	}
@@ -158,7 +162,14 @@ class Core_model extends CI_Model {
 		$this->db->select('*')
 				 ->from($this->table)
 				 ->where($this->key, $this->key_value);
-		$datas = $this->db->get()->row();
+		
+		$datas = $this->db->get();
+		if ($datas->num_rows() === 1){
+			return $datas->row();
+		} else {
+			return false;
+		}
+		
 		$this->_debug_array[] = $this->db->last_query();
 		return $datas;
 	}

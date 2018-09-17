@@ -14,11 +14,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<div class="wrapper">
 		<!-- top menu -->
 		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		  <a href="#menu-toggle" id="menu-toggle"><span class="navbar-toggler-icon"></span></a>
 		  <a title="<?php echo $slogan;?>" class="navbar-brand" href="<?php echo base_url();?>Home"><?php echo $app_name;?> <small class="text-muted"></small></a>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		  </button>
-		  <a href="#menu-toggle" id="menu-toggle"><span class="navbar-toggler-icon"></span></a>
 		  <div class="collapse navbar-collapse" id="navbarCollapse">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item dropdown">

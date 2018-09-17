@@ -67,6 +67,15 @@ body {
 .dropdown-item:focus, .dropdown-item:hover{background:#fec400;}
 
 
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
 
 /* ---------------------------------------------------
     CONTENT STYLE
