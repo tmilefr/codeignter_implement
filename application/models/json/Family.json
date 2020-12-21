@@ -49,7 +49,7 @@
 		"type": "input",
 		"list": true,
 		"search": false,
-		"rules": "trim|required|min_length[8]",
+		"rules": "trim|required|min_length[3]",
 		"since": 1,
 		"dbforge": {
 			"type": "VARCHAR",

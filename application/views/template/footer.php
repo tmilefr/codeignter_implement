@@ -1,31 +1,67 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
-
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item active">
-			<?php echo ((isset($this->pagination)) ? $this->pagination->create_links():'');?>
-			</li>
-			<li>
-
-			</li>
-			<li class="nav-item">
-			<?php echo $footer_line;?>
-			</li> 
-		</ul>
-		<span class="navbar-text">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></span>
+			<!-- footer bar -->
+			<nav class="navbar navbar-expand-lg navbar-light bg-light"> 
+				<ul class="navbar-nav mr-auto"> 
+					<li class="nav-item">
+					<?php echo ((isset($this->pagination)) ? $this->pagination->create_links():'');?>
+					</li>
+					<li class="nav-item">
+						
+					</li>
+					<?php /* //TODO : perpage<li class="nav-item">
+						<?php echo ((isset($this->pagination)) ? $this->pagination->create_perpage():'');?>
+					</li> */ ?>
+					<li class="nav-item">
+					<?php echo $footer_line;?>
+					</li> 
+				</ul>
+				<span class="navbar-text">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></span>
+			</nav>
 		</div>
-	</nav>
+	</div>
 
-
+	<!-- Modal -->
+	<div class="modal fade" id="AboutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel"><?php echo $this->config->item('app_name');?></h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<?php echo $this->config->item('about');?>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo Lang('Close');?></button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	<!- modal tools for delete ->
+	<div id="confirmModal" class="modal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title"><?php echo Lang('DELETE_CONFIRMATION');?></h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<p><?php echo Lang('TXT_DELETE_CONFIRMATION');?></p>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-success" data-dismiss="modal"><?php echo Lang('CANCEL');?></button>
+			<button type="button" class="btn btn-danger" id="confirmModalYes"><?php echo Lang('YES');?></button>
+		  </div>
+		</div>
+	  </div>
+	</div>	
+	
 	<!-- Optional JavaScript -->
-	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>
+	<?php $this->bootstrap_tools->RenderAttachFiles('js');?>
   </body>
 </html>
