@@ -45,12 +45,6 @@ foreach($required_field AS $name){
 <div class="form-row">
 	<div class="form-group col-md-6">
 		<?php 
-			echo $this->bootstrap_tools->label('type');
-			echo $this->render_object->RenderFormElement('type'); 
-		?>
-	</div>
-	<div class="form-group col-md-6">
-		<?php 
 			echo $this->bootstrap_tools->label('section');
 			echo $this->render_object->RenderFormElement('section'); 
 		?>

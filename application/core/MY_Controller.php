@@ -150,7 +150,7 @@ class MY_Controller extends CI_Controller {
 	function __destruct(){
 		if ($this->_debug){
 			//echo '<pre>'.print_r($this->data_view,true).'</pre>';
-
+			echo debug($this->_rules);
 			$this->bootstrap_tools->render_debug($this->_debug_array);
 		}
 		
@@ -357,7 +357,6 @@ class MY_Controller extends CI_Controller {
 					$datas[$field] 	= $this->input->post($field);
 				}
 			}
-
 			if ($this->input->post('form_mod') == 'edit'){
 				if (isset($datas['id']) AND $id = $datas['id']){
 					$this->{$this->_model_name}->_set('key_value', $id);	
@@ -367,6 +366,13 @@ class MY_Controller extends CI_Controller {
 			} else if ($this->input->post('form_mod') == 'add'){
 				$this->data_view['id'] = $this->{$this->_model_name}->post($datas);
 			}
+
+			foreach($this->{$this->_model_name}->_get('autorized_fields') AS $field){
+				if (method_exists($this->{$this->_model_name}->_get('defs')[$field]->element,'AfterExec')){
+					$datas[$field] 	= $this->{$this->_model_name}->_get('defs')[$field]->element->AfterExec($this->data_view['id']);
+				}
+			}
+
 			if ($this->_redirect){
 				redirect($this->_get('_rules')[$this->next_view]->url);
 			}

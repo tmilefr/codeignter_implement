@@ -25,6 +25,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="oi oi-cog"></span></a>
 					<div class="dropdown-menu">
+
+					
+						<a class="dropdown-item" href="<?php echo base_url('Acl_roles_controller');?>"><?php echo Lang('Acl_roles_controller');?></a>
+						<a class="dropdown-item" href="<?php echo base_url('Acl_controllers_controller');?>"><?php echo Lang('Acl_controllers_controller');?></a>
+						<a class="dropdown-item" href="<?php echo base_url('Acl_actions_controller');?>"><?php echo Lang('Acl_actions_controller');?></a>
 						<a class="dropdown-item" href="<?php echo base_url('Parameters');?>"><?php echo Lang('Parameters');?></a>
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="#" data-toggle="modal" data-target="#AboutModal"><?php echo Lang('About');?></a>

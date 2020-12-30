@@ -12,7 +12,6 @@
 		<p class="card-text">
 			<?php 
 				echo $this->bootstrap_tools->label('section').' : '.$this->render_object->RenderElement('section').'<br/>'; 
-				echo $this->bootstrap_tools->label('type').' : '.$this->render_object->RenderElement('type').'<br/>'; 
 			?>
 		</p>
 		<?php

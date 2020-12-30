@@ -76,21 +76,6 @@
 			"constraint": "255"
 		}
 	},
-	"type": {
-		"type": "select",
-		"list": true,
-		"search": false,
-		"rules": null,
-		"since": 1,
-		"values": {
-			"1": "famille",
-			"2": "individuelle"
-		},
-		"dbforge": {
-			"type": "INT",
-			"constraint": "5"
-		}
-	},
 	"section": {
 		"type": "select",
 		"list": true,
@@ -98,10 +83,10 @@
 		"rules": null,
 		"since": 1,
 		"values": {
-			"1": "Motonautisme",
-			"2": "Ski",
-			"3": "Voile",
-			"4": "Wake"
+			"1": "s1",
+			"2": "s2",
+			"3": "s3",
+			"4": "s4"
 		},
 		"dbforge": {
 			"type": "INT",

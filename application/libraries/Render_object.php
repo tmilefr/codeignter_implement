@@ -7,7 +7,7 @@ Class Render_object{
 	protected $id 		= NULL; //id of active element
 	protected $dba_data = NULL; //Data from DATABASE from id element
 	protected $_debug 	= FALSE;//Debug 
-	protected $_model 	= FALSE;
+	protected $_model 	= null;
 	protected $_ui_rules= FALSE;
 	protected $form_mod = FALSE;
 	protected $notime	= TRUE;
@@ -115,13 +115,16 @@ Class Render_object{
 		return $this->_model->_get('defs')[$field]->element->RenderFormElement();
 	}
 	
-	function RenderElement($field,$value = null)
+	function RenderElement($field,$value = null, $parent_id = null)
 	{
 		if (!$value) {
 			if (isset($this->dba_data)){ // try to check database
 				$value = $this->dba_data->{$field};
 			}
 		}	
+		if ($parent_id){
+			$this->_model->_get('defs')[$field]->element->_set('parent_id',$parent_id);
+		}
 		$this->_model->_get('defs')[$field]->element->_set('form_mod', $this->form_mod);	
 		$this->_model->_get('defs')[$field]->element->_set('value', $value);
 		return $this->_model->_get('defs')[$field]->element->Render();

@@ -9,16 +9,26 @@ require_once(APPPATH.'libraries/elements/element.php');
 class element_created extends element
 {	
 	protected $form_mod;
+
+	/**
+	 * Generic set
+	 * @return void
+	 */
+	public function _set($field,$value){
+		$this->$field = $value;
+		//echo debug($value);
+	}
+
 	public function RenderFormElement(){
 		if ($this->form_mod == 'edit'){
-			echo form_hidden($this->name , $this->value);
+			return  form_hidden($this->name , $this->value);
 		} else {
-			echo form_hidden($this->name , date('Y-m-d h:i:s'));
+			return form_hidden($this->name , date('Y-m-d h:i:s'));
 		}
 	}
 	
 	public function Render(){
-		return '';//GetFormatDate($this->value);
+		return ($this->value);
 	}
 }
 

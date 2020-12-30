@@ -23,7 +23,8 @@
 
 		foreach($this->{$_model_name}->_get('defs') AS $field=>$defs){
 			if ($defs->list === true){
-				echo '<td>'.$this->render_object->RenderElement($field, $data->{$field}).'</td>';
+				//echo debug($data);
+				echo '<td>'.$this->render_object->RenderElement($field, $data->{$field}, $data->id).'</td>';
 			}
 		}
 		echo '</tr>';
