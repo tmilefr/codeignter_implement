@@ -15,6 +15,15 @@ class Acl_controllers_model extends Core_model{
 		$this->_init_def();
 	}
 
+	/*function GetCtrl(){
+		$datas = $this->db->select( '*' )
+		->join('acl_actions', $this->table.'.id=acl_actions.id_ctrl' ,'left')
+		->get($this->table);
+		$this->_debug_array[] = $this->db->last_query();
+
+		return $datas->result();
+	}*/
+
 }
 ?>
 

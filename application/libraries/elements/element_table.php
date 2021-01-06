@@ -145,7 +145,7 @@ class element_table extends element
 	{
 		unset($this->CI);
 		//echo '<pre><code>'.print_r($this , 1).'</code></pre>';
-		echo debug($this);
+		//echo debug($this);
 	}
 	
 	/**

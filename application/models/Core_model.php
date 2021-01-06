@@ -170,6 +170,7 @@ class Core_model extends CI_Model {
 	 * 
 	 */
 	public function get_all(){
+		//echo debug($this->filter);
 		if (is_array($this->filter) AND count($this->filter)){
 			foreach($this->filter AS $key => $value){
 				$this->db->where($key , $value);

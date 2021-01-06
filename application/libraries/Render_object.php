@@ -8,7 +8,7 @@ Class Render_object{
 	protected $dba_data = NULL; //Data from DATABASE from id element
 	protected $_debug 	= FALSE;//Debug 
 	protected $_model 	= null;
-	protected $_ui_rules= FALSE;
+	protected $_ui_rules= [];
 	protected $form_mod = FALSE;
 	protected $notime	= TRUE;
 	protected $_reset   = [];
@@ -51,12 +51,11 @@ Class Render_object{
 		}		
 		if ($key_value)
 		{
-			if ($this->CI->_get('_rules')['delete']->autorize AND !$blocked)
-				$element_menu .= $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['delete']->url 	, $key_value , 'oi-circle-x', 'btn-danger confirmModalLink');		
-			if ($this->CI->_get('_rules')['edit']->autorize AND !$blocked)
-				$element_menu .= $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['edit']->url 	, $key_value , 'oi-pencil'	, 'btn-warning');	
-			if ($this->CI->_get('_rules')['view']->autorize AND !$blocked)
-				$element_menu .= $this->CI->bootstrap_tools->render_icon_link($this->CI->_get('_rules')['view']->url	, $key_value , 'oi-zoom-in'	, 'btn-success');	
+			foreach($this->_ui_rules AS $rule){
+				if (!in_array($rule->term , ['add','list']) AND $rule->autorize AND  !$blocked){
+					$element_menu .= $this->CI->bootstrap_tools->render_icon_link($rule->url , $key_value , $rule->icon, $rule->class);
+				}
+			}
 		}
 		return $element_menu;
 	}

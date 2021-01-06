@@ -135,8 +135,11 @@ class MY_Controller extends CI_Controller {
 	function _set_ui_rules($key,$value){
 		$rules = new StdClass();
 		$rules->url 	=  base_url($this->_controller_name.'/'.$key);
+		$rules->term 	= $key;
 		$rules->name 	= $this->lang->line(strtoupper($key).'_'.$this->_controller_name);
 		$rules->autorize= $value;
+		$rules->icon 	= $this->lang->line($key.'_icon');
+		$rules->class  = $this->lang->line($key.'_class');
 		$this->_rules[$key] = $rules;
 	}
 
@@ -150,7 +153,7 @@ class MY_Controller extends CI_Controller {
 	function __destruct(){
 		if ($this->_debug){
 			//echo '<pre>'.print_r($this->data_view,true).'</pre>';
-			echo debug($this->_rules);
+			//echo debug($this->_rules);
 			$this->bootstrap_tools->render_debug($this->_debug_array);
 		}
 		

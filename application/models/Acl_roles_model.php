@@ -15,6 +15,15 @@ class Acl_roles_model extends Core_model{
 		$this->_init_def();
 	}
 
+	function GetRoles($id = null){
+		if ($id){
+			$this->db->set('id', $id_ctrl);
+			$this->db->where('id_ctrl', 0);
+			$this->db->update($this->table);	
+			$this->_debug_array[] = $this->db->last_query();
+		}
+	}
+
 }
 ?>
 
