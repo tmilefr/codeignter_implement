@@ -12,6 +12,7 @@ Class Render_object{
 	protected $form_mod = FALSE;
 	protected $notime	= TRUE;
 	protected $_reset   = [];
+	protected $_not_link_list = ['add','list'];
 	
 	public function __construct()
 	{
@@ -52,7 +53,7 @@ Class Render_object{
 		if ($key_value)
 		{
 			foreach($this->_ui_rules AS $rule){
-				if (!in_array($rule->term , ['add','list']) AND $rule->autorize AND  !$blocked){
+				if (!in_array($rule->term , $this->_not_link_list ) AND $rule->autorize AND  !$blocked){
 					$element_menu .= $this->CI->bootstrap_tools->render_icon_link($rule->url , $key_value , $rule->icon, $rule->class);
 				}
 			}
@@ -83,6 +84,10 @@ Class Render_object{
 		return $string_render_link;
 	}
 	
+	public function _getCi($field){
+		return $this->CI->_get($field);
+	}
+
 	public function Set_Rules_elements()
 	{
 		$this->_model = $this->CI->{$this->datamodel};
@@ -134,7 +139,7 @@ Class Render_object{
 		if ($this->_debug == TRUE){
 			unset($this->CI);
 			unset($this->_model);
-			echo '<pre><code>'.print_r($this , 1).'</code></pre>';
+			echo debug($this, __file__ );
 		}
 	}
 	

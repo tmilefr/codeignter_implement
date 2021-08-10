@@ -34,7 +34,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="#" data-toggle="modal" data-target="#AboutModal"><?php echo Lang('About');?></a>
 					</div>
+				</li>					
+				<li class="nav-item"> 
+					<span class="title"><?php echo $title;?></span>
 				</li>
+				<?php  
+				if ($this->render_object->_get('_ui_rules') AND !$this->render_object->_get('form_mod')){  
+
+					foreach($this->render_object->_get('_ui_rules') AS $rule){
+						if (in_array($rule->term , $this->render_object->_get('_not_link_list')) AND $rule->autorize ){
+							echo '<li class="nav-item '.(($this->render_object->_getCi('_action') == $rule->term) ? 'active':'').'"><a class="nav-link " href="'.$rule->url.'"><span class="'.$rule->icon.'"></span> '.$rule->name.'</a></li>';
+
+						}
+					}
+				} 
+				?> 
+			
+			</ul>
+			<ul class="ml-auto navbar-nav nav nav-pills navbar-dark bg-dark">
+
+
 			</ul>
 			<?php
 			if ($search_object->autorize){
@@ -57,8 +76,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<nav class="navbar navbar-dark bg-dark">
 				<ul class="navbar-nav mr-auto flex-column">
 					<li class="nav-item">
-						<a class="nav-link" href="<?php echo base_url('Users_controller/list');?>">
-							<span class="oi oi-person"></span> <?php echo Lang('Users_controller');?></span>
+						<a class="nav-link <?php echo (($this->render_object->_getCi('_controller_name') == 'Users_controller') ? 'active':'');?>" href="<?php echo base_url('Users_controller/list');?>">
+							<span class="oi oi-person "></span> <?php echo Lang('Users_controller');?></span>
 						</a>
 					</li>	
 				</ul>

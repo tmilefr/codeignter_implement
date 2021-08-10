@@ -16,7 +16,8 @@ class MY_Controller extends CI_Controller {
 	protected $_model_name			= false;
 	protected $_debug_array  		= array();
 	protected $_debug 				= FALSE;
-	protected $_controller_name 	= null;
+	protected $_controller_name 	= null; 
+	protected $_action			 	= null;
 	protected $_rules				= null;
 	protected $_autorize			= array();
 	
@@ -88,6 +89,8 @@ class MY_Controller extends CI_Controller {
 	function init(){
 		$this->process_url();
 		
+		//echo debug( $this->uri->segment_array());
+
 		$this->data_view['app_name'] 	= $this->config->item('app_name'); 
 		$this->data_view['slogan'] 		= $this->config->item('slogan'); 
 		$this->data_view['title'] 		= $this->title;
@@ -152,9 +155,7 @@ class MY_Controller extends CI_Controller {
 	 */
 	function __destruct(){
 		if ($this->_debug){
-			//echo '<pre>'.print_r($this->data_view,true).'</pre>';
-			//echo debug($this->_rules);
-			$this->bootstrap_tools->render_debug($this->_debug_array);
+			echo debug($this->_debug_array, __file__);
 		}
 		
 	}	
@@ -193,7 +194,7 @@ class MY_Controller extends CI_Controller {
 		$msg->file = $file;
 		$msg->line = $line;
 		
-		$this->_debug_array[] = $msg;
+		$this->_debug_array[] = $message;
 	}
  
 	/**
@@ -206,6 +207,8 @@ class MY_Controller extends CI_Controller {
 		if ($this->input->post('global_search')){
 			$this->session->set_userdata( $this->set_ref_field('global_search') ,$this->input->post('global_search'));
 		}
+		$this->_action = $this->uri->segment(2, 0);
+
 		$array = $this->uri->uri_to_assoc(3);
 		foreach($array AS $field=>$value){
 			if (in_array($field,$this->_autorised_get_key)){
