@@ -17,7 +17,6 @@ if ( ! function_exists('debug'))
 	}
 }
 
-
 /**
  * Returns a human readable filesize
  *
@@ -49,8 +48,6 @@ if ( ! function_exists('NameToFilename'))
 		return str_replace(['\\',' ','/',','],['_','_','_','_'] ,$name);
 	}
 }
-
-
 
 if ( ! function_exists('GetFormatDate'))
 {

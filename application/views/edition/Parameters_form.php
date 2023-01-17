@@ -1,5 +1,5 @@
 <?php
-echo form_open('Parameters', array('class' => '', 'id' => 'edit') , array('form_mod'=>'','id'=>'') );
+echo form_open('Parameters/edit', array('class' => '', 'id' => 'edit') , array('form_mod'=>'','id'=>'') );
 
 $bloc = '';
 		foreach($this->Parameters_model->_get('defs') AS $field => $def){
@@ -25,7 +25,7 @@ $bloc = '';
 		<br/>
 		<div class="form-row">
 			<div class="col">
-				<button type="submit" class="btn btn-primary"><?php echo Lang('edit');?></button>
+				<button type="submit" class="btn btn-primary"><?php echo Lang('valid');?></button>
 			</div>
 		</div>
 	</div>

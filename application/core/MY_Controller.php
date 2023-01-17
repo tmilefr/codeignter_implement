@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') || exit('No direct script access allowed');
 /**
  * MY_Controller
@@ -13,21 +14,23 @@ class MY_Controller extends CI_Controller {
 	
 	protected $_autorised_get_key 	= array('order','direction','filter','page','repertoire','search','id'); //autorised key in url
 	protected $_redirect			= true;
-	protected $_model_name			= false;
+	protected $_model_name			= FALSE;
 	protected $_debug_array  		= array();
 	protected $_debug 				= FALSE;
 	protected $_controller_name 	= null; 
 	protected $_action			 	= null;
 	protected $_rules				= null;
 	protected $_autorize			= array();
+	protected $_search  			= false;
 	
 	protected $view_inprogress 		= null;
 	protected $data_view 			= array();
 	protected $title 				= '';
 	protected $json = null;
 	protected $json_path = APPPATH.'models/json/';
-	protected $per_page	= 10;
+	protected $per_page	= 15;
 	protected $next_view = 'list';
+	protected $render_view = true;
 					
 	/**
 	 * @brief Generic Constructor
@@ -41,9 +44,13 @@ class MY_Controller extends CI_Controller {
 		$this->load->helper('tools');
 		$this->load->library('Render_object');
 		$this->load->library('bootstrap_tools');
-		
+		$this->load->library('acl');
+		$this->load->library('Render_menu');
+
 		$this->lang->load('traduction');
 		$this->config->load('app');
+		$this->config->load('secured');
+		
 	}
 	
 	public function SaveToJson($name, $data){
@@ -52,12 +59,29 @@ class MY_Controller extends CI_Controller {
 	}
 	
 	public function Jsondata($field){
-		$users = $this->{$this->_model_name}->_get('defs')[$field];
-		$tmp = '[';
-		foreach($users->values AS $key => $value){
-			$tmp .= '{ "id":'.$key.', "label":"'.$value.'"},';
+		$json = '[';
+		$model = $this->_model_name;
+		//autre model utilisé pour l'objet
+		if ($pos = strpos($field,'_')){
+			$model2 = substr($field,$pos+1);
+			if (isset($this->$model2)) {
+				$model = substr($field,$pos+1);
+				$field = substr($field,0,$pos);	
+			}
 		}
-		echo substr($tmp,0,-1).']';
+		$def = $this->{$model}->_get('defs')[$field];
+		if ( method_exists( $def ,'JsonData') &&  $def->_get('query') ){//new methode for set datas
+			$json .= $def->Jsondata();
+		} else {
+			$tmp = '';
+			if (count($def->_get('values')))
+			foreach($def->_get('values') AS $key => $value){
+				$tmp .= '{ "id":"'.$key.'", "label":"'.$value.'"},';
+			}
+			$json .=  substr($tmp,0,-1);
+		}
+		//echo debug($datas->values);
+		echo $json.']';
 	}	
 	
 	/**
@@ -88,14 +112,15 @@ class MY_Controller extends CI_Controller {
 	 */
 	function init(){
 		$this->process_url();
-		
 		//echo debug( $this->uri->segment_array());
 
 		$this->data_view['app_name'] 	= $this->config->item('app_name'); 
 		$this->data_view['slogan'] 		= $this->config->item('slogan'); 
 		$this->data_view['title'] 		= $this->title;
 		
-		$this->data_view['footer_line'] = '';	
+		$this->data_view['raw_url']		= $this->_controller_name.'/'.$this->_action;
+
+		$this->data_view['footer_line'] = '';
 		switch($this->config->item('debug_app')){
 			case 'debug':
 				$this->_set('_debug', TRUE);
@@ -115,9 +140,11 @@ class MY_Controller extends CI_Controller {
 		foreach($this->_autorize AS $key=>$value){
 			$this->_set_ui_rules($key , $value);
 		}
+		$this->render_menu->init();
 		//to permit use it in view.
 		$this->render_object->_set('_ui_rules' , $this->_rules);
-		
+		$this->_debug($this->_rules);
+
 		$search_object 					= new StdClass();
 		$search_object->url 			= $this->router->class.'/'.$this->router->method;
 		$search_object->global_search 	= $this->session->userdata($this->set_ref_field('global_search'));
@@ -140,6 +167,9 @@ class MY_Controller extends CI_Controller {
 		$rules->url 	=  base_url($this->_controller_name.'/'.$key);
 		$rules->term 	= $key;
 		$rules->name 	= $this->lang->line(strtoupper($key).'_'.$this->_controller_name);
+		if (!$this->acl->hasAccess(strtolower($this->_controller_name.'/'.$key))){
+			$value = FALSE;
+		} 
 		$rules->autorize= $value;
 		$rules->icon 	= $this->lang->line($key.'_icon');
 		$rules->class  = $this->lang->line($key.'_class');
@@ -157,9 +187,8 @@ class MY_Controller extends CI_Controller {
 		if ($this->_debug){
 			echo debug($this->_debug_array, __file__);
 		}
-		
 	}	
-	
+
 	/**
 	 * @brief 		Render View in Template
 	 * @param       $this->view_inprogress
@@ -224,7 +253,6 @@ class MY_Controller extends CI_Controller {
 							$filtered[$value] = $array['filter_value'];
 						}
 						$this->session->set_userdata( $this->set_ref_field('filter') , $filtered );
-						
 					break;
 					default:
 						$this->session->set_userdata( $this->set_ref_field($field) , $value );
@@ -253,7 +281,8 @@ class MY_Controller extends CI_Controller {
 	 */
 	public function list()
 	{
-		$this->data_view['search_object']->autorize = true;
+		if ($this->_search)
+			$this->data_view['search_object']->autorize = true;
 		
 		$this->{$this->_model_name}->_set('global_search'	, $this->session->userdata($this->set_ref_field('global_search')));
 		$this->{$this->_model_name}->_set('order'			, $this->session->userdata($this->set_ref_field('order')));
@@ -261,24 +290,29 @@ class MY_Controller extends CI_Controller {
 		$this->{$this->_model_name}->_set('direction'		, $this->session->userdata($this->set_ref_field('direction')));
 		$this->{$this->_model_name}->_set('per_page'		, $this->per_page);
 		$this->{$this->_model_name}->_set('page'			, $this->session->userdata($this->set_ref_field('page')));
-		
+
+		$config = array();
+		$config['use_page_numbers'] = TRUE;
+		$config['per_page'] 	= $this->per_page;
+		$config['cur_page'] 	= (($this->{$this->_model_name}->_get('page')) ? $this->{$this->_model_name}->_get('page'):1);
+		$config['base_url'] 	= $this->config->item('base_url').$this->_controller_name.'/list/page/';
+		$config['total_rows'] 	= $this->{$this->_model_name}->get_pagination();
+
+		if ($config['per_page'] > $config['total_rows'] ){
+			$config['cur_page'] 	=  1;
+			$this->{$this->_model_name}->_set('page', 1 );
+		}
+		$this->pagination->initialize($config);	
+
+		$this->_debug(print_r($config,TRUE), 'list' , 'debug', __file__ , __line__ );		
 		$this->_debug($this->set_ref_field('page'));
 		$this->_debug($this->session->userdata($this->set_ref_field('page')));
 		//GET DATAS
 		$this->data_view['fields'] 	= $this->{$this->_model_name}->_get('autorized_fields');
 		$this->data_view['datas'] 	= $this->{$this->_model_name}->get();
-		
-		$config = array();
-		$config['use_page_numbers'] = TRUE;
-		$config['per_page'] 	= $this->per_page;
-		$config['cur_page'] 	= $this->{$this->_model_name}->_get('page');
-		$config['base_url'] 	= $this->config->item('base_url').$this->_controller_name.'/list/page/';
-		$config['total_rows'] 	= $this->{$this->_model_name}->get_pagination();
-		$this->pagination->initialize($config);	
-
-		
 		$this->_set('view_inprogress','unique/list_view');
-		$this->render_view();
+		if ($this->render_view)
+			$this->render_view();
 	}	
 	
 	/**
@@ -296,7 +330,8 @@ class MY_Controller extends CI_Controller {
 			$this->render_object->_set('dba_data',$dba_data);
 		}	
 		$this->_set('view_inprogress',$this->_list_view);
-		$this->render_view();		
+		if ($this->render_view)
+			$this->render_view();	
 		
 	}	
 	
@@ -351,34 +386,10 @@ class MY_Controller extends CI_Controller {
 		}		
 		
 		//$this->form_validation->set_rules('passconf', 'Password Confirmation', 'trim|required|matches[password]');
-		if ($this->form_validation->run() === FALSE){
-
-
+		if ($this->form_validation->run($this->_model_name) === FALSE){
+			$this->_debug(validation_errors(),'edit','form_validation',__FILE__,__LINE__);
 		} else {
-			$datas = array();
-			foreach($this->{$this->_model_name}->_get('autorized_fields') AS $field){
-				if (method_exists($this->{$this->_model_name}->_get('defs')[$field]->element,'PrepareForDBA')){
-					$datas[$field] 	= $this->{$this->_model_name}->_get('defs')[$field]->element->PrepareForDBA($this->input->post($field));
-				} else {
-					$datas[$field] 	= $this->input->post($field);
-				}
-			}
-			if ($this->input->post('form_mod') == 'edit'){
-				if (isset($datas['id']) AND $id = $datas['id']){
-					$this->{$this->_model_name}->_set('key_value', $id);	
-					$this->{$this->_model_name}->_set('datas', $datas);
-					$this->{$this->_model_name}->put();
-				} 
-			} else if ($this->input->post('form_mod') == 'add'){
-				$this->data_view['id'] = $this->{$this->_model_name}->post($datas);
-			}
-
-			foreach($this->{$this->_model_name}->_get('autorized_fields') AS $field){
-				if (method_exists($this->{$this->_model_name}->_get('defs')[$field]->element,'AfterExec')){
-					$datas[$field] 	= $this->{$this->_model_name}->_get('defs')[$field]->element->AfterExec($this->data_view['id']);
-				}
-			}
-
+			$datas = $this->_ProcessPost($this->_model_name);
 			if ($this->_redirect){
 				redirect($this->_get('_rules')[$this->next_view]->url);
 			}
@@ -388,6 +399,42 @@ class MY_Controller extends CI_Controller {
 
 		$this->_set('view_inprogress',$this->_edit_view);
 		$this->render_view();
+	}
+
+
+
+	function _ProcessPost($model_name, $override_fields = null){
+		$datas = array();
+		if ($override_fields){
+			$fields =  $override_fields;
+		} else{
+			$fields = $this->{$model_name}->_get('autorized_fields');
+		}
+		foreach($fields AS $field){
+			if (method_exists($this->{$model_name}->_get('defs')[$field],'PrepareForDBA')){
+				$datas[$field] 	= $this->{$model_name}->_get('defs')[$field]->PrepareForDBA($this->input->post($field));
+			} else {
+				$datas[$field] 	= $this->input->post($field);
+			}
+		}
+		if ($this->input->post('form_mod') == 'edit'){
+			if (isset($datas['id']) AND $id = $datas['id']){
+				$this->{$model_name}->_set('key_value', $id);	
+				$this->{$model_name}->_set('datas', $datas);
+				$this->{$model_name}->put();
+			} 
+		} else if ($this->input->post('form_mod') == 'add'){
+			//$this->_debug($datas);
+			$this->data_view['id'] = $this->{$model_name}->post($datas);
+			$datas['id'] = $this->data_view['id'];
+		}
+
+		foreach($this->{$model_name}->_get('autorized_fields') AS $field){
+			if (method_exists($this->{$model_name}->_get('defs')[$field],'AfterExec')){
+				$this->{$model_name}->_get('defs')[$field]->AfterExec($datas);
+			} 
+		}
+		return $datas;
 	}
 
 	/**

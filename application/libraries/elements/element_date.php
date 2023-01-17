@@ -20,7 +20,7 @@ class element_date extends element
 	}
 	
 	public function RenderFormElement(){
-		return $this->CI->bootstrap_tools->input_date($this->name,$this->value);
+		return $this->CI->bootstrap_tools->input_date($this->name,$this->value,$this->datatarget);
 	}
 	
 	public function Render(){

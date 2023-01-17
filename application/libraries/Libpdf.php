@@ -56,12 +56,17 @@ class Libpdf {
 	 * 
 	 * 
 	 */
-	function DoPdf($datas,$view_pdf,$filename){
+	function DoPdf($datas,$view_pdf,$filename, $stream = false){
 		$data_view['datas'] = $datas;
-		$data_view['logo'] =  $this->ImgBase64('bn3f.jpg');
+		$data_view['logo'] =  $this->ImgBase64('regio.png');
 		$html = $this->CI->load->view($view_pdf, $data_view, true);
 		$this->filename = $filename;
 		$this->makePdf($html);
+
+		if ($stream){
+			// Output the generated PDF to Browser
+			$this->CI->dompdf->stream($filename);
+		}
 	}
 	
 	/**

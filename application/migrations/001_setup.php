@@ -37,35 +37,40 @@ class Migration_setup extends CI_Migration {
 		}
 
 		public function LoadData($json,$model,$path){
-			$this->load->model($model);
-			$json = file_get_contents($this->json_path.$json);
-			$json = json_decode($json);
-			foreach($json->{$path} AS $family){
-				$this->{$model}->post($family);
+			if (file_exists($this->json_path.$json)){
+				$this->load->model($model);
+				$json = file_get_contents($this->json_path.$json);
+				$json = json_decode($json);
+				foreach($json->{$path} AS $element){
+					$this->{$model}->post($element);
+				}
 			}
 		}	        
         
         public function up()
         {		
-			/* ex : Family table */
-			$this->dbforge->add_field( $this->_get_json('Family.json') );
-			$this->dbforge->add_key('id', TRUE);
-			$this->dbforge->create_table('family');    
-			/* Feeders  */
-			$this->LoadData('Family_data.json','Family_model','Family');		
+			$this->Make('Subscription');
+			$this->Make('Service');
+			$this->Make('Taux');
+			$this->Make('Users');
+			$this->Make('Contribution');
+	    }
 
-			/* ex : Users table */
-			$this->dbforge->add_field( $this->_get_json('Users.json') );
+		public function Make($name){
+			$this->dbforge->drop_table( $name , TRUE);
+			$this->dbforge->add_field( $this->_get_json($name.'.json') );
 			$this->dbforge->add_key('id', TRUE);
-			$this->dbforge->create_table('users');  
+			$this->dbforge->create_table($name);    
 			/* Feeders  */
-			$this->LoadData('Users_data.json','Users_model','Users');
-        }
+			$this->LoadData($name.'_data.json',$name.'_model',$name);	
+		}
 
         public function down()
         {
 			$this->dbforge->drop_table('users'  , TRUE);
+			$this->dbforge->drop_table('subscription' , TRUE);
 			$this->dbforge->drop_table('family' , TRUE);
+			
         }
 }
 

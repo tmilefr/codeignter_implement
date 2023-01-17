@@ -15,6 +15,8 @@ class element_table extends element
 	protected $model	= '';
 	protected $foreignkey = '';
 	protected $action = '';
+	protected $ref = '';
+	protected $parent_id = '';
 
 	public function __construct(){
 		parent::__construct();
@@ -26,8 +28,8 @@ class element_table extends element
 			$this->CI->load->model($this->model);
 	}	
 
-	public function AfterExec($id){
-		$this->CI->{$this->model}->SetLink($id);
+	public function AfterExec($datas){
+		$this->CI->{$this->model}->SetLink($this->foreignkey, $datas['id']);
 	}
 
 	public function PrepareForDBA($value){
@@ -44,23 +46,24 @@ class element_table extends element
 		foreach($this->CI->{$this->model}->_get('defs') AS $field=>$defs){
 			$datas[$field] = $this->CI->input->post($field.'_'.$this->model);
 		}	
+
 		foreach($datas[$this->ref] AS $key=>$value){
-			$lgn = new Stdclass();
-			foreach($this->CI->{$this->model}->_get('defs') AS $field=>$defs){
-				$lgn->$field = $datas[$field][$key];
-			}
-			if ($lgn->{$this->ref}){
-				if ($id_parent){
-					$lgn->{$this->foreignkey} = $id_parent;
-				} else {
-					$lgn->{$this->foreignkey} = 'tmp';
-				}					
-				$this->CI->{$this->model}->post($lgn);
-				$obj[] = $lgn->{$this->ref};
+			if ($value != '...'){
+				$lgn = new Stdclass();
+				foreach($this->CI->{$this->model}->_get('defs') AS $field=>$defs){
+					$lgn->{$field} = $datas[$field][$key];
+				}
+				if ($lgn->{$this->ref}){
+					if ($id_parent){
+						$lgn->{$this->foreignkey} = $id_parent;
+					} else {
+						$lgn->{$this->foreignkey} = 'tmp';
+					}					
+					$this->CI->{$this->model}->post($lgn);
+					$obj[] = $lgn->{$this->ref};
+				}
 			}
 		}
-		//echo debug($obj);
-		//die();
 		return json_encode($obj);
 	}
 
@@ -68,7 +71,7 @@ class element_table extends element
 		//return $this->CI->bootstrap_tools->input_text($this->name, $this->CI->lang->line($this->name) , $this->value);
 		$id = $this->CI->render_object->_get('id');
 		$ref = [];
-		$table = '<div class="Dynamic_row">';
+		$table = '<div class="Dynamic_row" id="DR_'.$this->name.'">';
 		if ($id){
 			$this->CI->{$this->model}->_set('filter', [$this->foreignkey => $id ]);
 			$this->CI->{$this->model}->_set('order', $this->foreignkey);
@@ -78,63 +81,61 @@ class element_table extends element
 					$table .= '<div class="input-group mb-3">';
 					foreach($this->CI->{$this->model}->_get('defs') AS $field=>$defs){
 						//echo debug($this->CI->render_object->_get('form_mod'), __file__.' '.__line__);
-						$defs->element->_set('form_mod', $this->CI->render_object->_get('form_mod'));
-						$defs->element->_set('value', $data->{$field});
+						$defs->_set('form_mod', $this->CI->render_object->_get('form_mod'));
+						$defs->_set('value', $data->{$field});
+						$defs->_set('parent_id', $data->id);
 						
-						$defs->element->set_name('_'.$this->model);
-						$defs->element->SetMultiple(TRUE);
+						$defs->set_name('_'.$this->model);
+						$defs->SetMultiple(TRUE);
 						
 
 						if (in_array( $field , ['id',$this->foreignkey])){							
 							$table .= '<input type="hidden" value="'.$data->{$field}.'" name="'.$field.'_'.$this->model.'[]">';
 						} else {
-							$table .= $defs->element->RenderFormElement();
+							$table .= $defs->RenderFormElement();
 						}				
 					}
-					$table .= '<div class="input-group-append"><button id="removeRow'.$data->id.'" type="button" class="removeRow btn btn-danger">Remove</button></div></div>';
+					$table .= '<div class="input-group-append"><button id="removeRow'.$data->id.'" type="button" class="removeRow btn btn-danger">'.$this->CI->lang->line('RemoveRow').'</button></div></div>';
 				}
 			}
 		}
-		$table .= '<div class="d-none" id="model"><div class="input-group mb-3">';
+		$table .= '<div class="d-none" id="model'.$this->name.'"><div class="input-group mb-3">';
 		foreach($this->CI->{$this->model}->_get('defs') AS $field=>$defs){
-			$defs->element->_set('value', '');
-			$defs->element->set_name('_'.$this->model);
-			$defs->element->SetMultiple(TRUE);
+			$defs->_set('value', '');
+			$defs->set_name('_'.$this->model);
+			$defs->SetMultiple(TRUE);
+			$defs->_set('parent_id', 'new');
 
 			if (in_array( $field , ['id',$this->foreignkey])){							
 				$table .= '<input type="hidden" value="" name="'.$field.'_'.$this->model.'[]">';
 			} else {
-				$table .= $defs->element->RenderFormElement();
+				$table .= $defs->RenderFormElement();
 			}			
 		}
-		$table .= '<div class="input-group-append"><button id="removeRow" type="button" class="removeRow btn btn-danger">Remove</button></div></div></div>';
-		$table .= '</div><button id="addRow" type="button" class="btn btn-info">Add Row</button>';
+		$table .= '<div class="input-group-append"><button id="removeRow" type="button" class="removeRow btn btn-danger">'.$this->CI->lang->line('RemoveRow').'</button></div></div></div>';
+		$table .= '</div><button type="button" ref="'.$this->name.'" class="addRow btn btn-info">'.$this->CI->lang->line('AddRow').'</button> '.$this->CI->lang->line($this->name.'_AddRow').'';
 		return form_hidden($this->name , $this->value ).$table;
 
 	}
 	
 	public function Render(){
-		//return $this->value;
-		$render = [];
-		//echo debug($this->parent_id);
-		if ($this->parent_id){
+		$tmp = $this->value;
+		if($this->parent_id){
 			$this->CI->{$this->model}->_set('filter', [$this->foreignkey => $this->parent_id ]);
 			$this->CI->{$this->model}->_set('order', $this->foreignkey);
 			$datas = $this->CI->{$this->model}->get_all();
-			if (count($datas)){
-				//echo debug($datas);
-				foreach($datas AS $key => $data){
-					foreach($this->CI->{$this->model}->_get('defs') AS $field=>$defs){
-						$defs->element->_set('form_mod', $this->CI->render_object->_get('form_mod'));
-						$defs->element->_set('value', $data->{$field});
-						if ( $field != 'id' AND $defs->element->_get('list') == true AND $string =  $defs->element->Render()){
-							$render[] = $string;
-						}				
+			$dts = [];
+			foreach($datas AS $data){
+				foreach($this->CI->{$this->model}->_get('defs') AS $field=>$defs){
+					if ($field != 'id'){
+						$defs->_set('value', $data->{$field});
+						$dts[] = $defs->render();
 					}
 				}
 			}
+			$tmp = implode(' ,', $dts);
 		}
-		return implode(',', $render);
+		return $tmp;
 	}
 
 	/**

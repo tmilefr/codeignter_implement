@@ -21,9 +21,9 @@ class Acl_roles_controller extends MY_Controller {
 		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true,'set_rules'=>true);
 		
 		
-		$this->title .= ' - '.$this->lang->line($this->_controller_name);
+		$this->title .=   $this->lang->line('GESTION').$this->lang->line($this->_controller_name);
 		
-		$this->_set('_debug', TRUE);
+		$this->_set('_debug', FALSE);
 		$this->init();
 		
 		$this->load->model('Acl_controllers_model');
@@ -35,6 +35,11 @@ class Acl_roles_controller extends MY_Controller {
 		
 		$this->_set('view_inprogress','edition/set_rules_view');
 		
+		$this->{$this->_model_name}->_set('key_value',$id);
+		$dba_data = $this->{$this->_model_name}->get_one();
+
+		$this->data_view['title'] = $this->lang->line($this->_controller_name).' : '.$dba_data->role_name;
+
 		if ($this->input->post('form_mod') == 'roles'){
 			if ($this->input->post('rules')){
 				$this->Acl_roles_controllers_model->DelRole($id);
@@ -51,17 +56,21 @@ class Acl_roles_controller extends MY_Controller {
 		}
 
 		$this->data_view['ctrls'] 	= $this->Acl_controllers_model->get_all();
-		
-		$acl_rca = $this->Acl_roles_controllers_model->get_all();
-		$this->data_view['acl_rc'] = [];
-		foreach($acl_rca AS $rca){
-			$this->data_view['acl_rc'][$rca->id_ctrl.'_'.$rca->id_act] = $rca->allow;
-		}
-
+		$acl_rca = $this->Acl_roles_model->getRolePermissions($id);
 		$this->data_view['id'] 	= $id;
 		foreach($this->data_view['ctrls'] AS $key=>$ctrl){
 			$this->Acl_actions_model->_set('filter',['id_ctrl'=>$ctrl->id]);
 			$this->data_view['ctrls'][$key]->actions = $this->Acl_actions_model->get_all();
+			foreach($this->data_view['ctrls'][$key]->actions AS $key_action=>$action){
+				$rule = strtolower($ctrl->controller.'/'.$action->action);
+				$value = FALSE;
+				if (isset($acl_rca[$id]) && count($acl_rca[$id]) > 0){
+					if (in_array($rule,$acl_rca[$id])){
+						$value = TRUE;
+					} 
+				} 
+				$this->data_view['ctrls'][$key]->actions[$key_action]->allow = $value;
+			}
 		}
 
 		$this->render_view();

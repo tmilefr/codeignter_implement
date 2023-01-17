@@ -21,9 +21,9 @@ class Acl_controllers_controller extends MY_Controller {
 		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true);
 		
 		
-		$this->title .= ' - '.$this->lang->line($this->_controller_name);
+		$this->title .=  $this->lang->line('GESTION').$this->lang->line($this->_controller_name);
 		
-		$this->_set('_debug', TRUE);
+		$this->_set('_debug', FALSE);
 		$this->init();
 		
 		$this->load->model('Acl_actions_model');

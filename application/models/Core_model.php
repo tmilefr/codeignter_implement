@@ -24,7 +24,14 @@ class Core_model extends CI_Model {
 	protected $defs = array();	
 	protected $json = null;
 	protected $json_path = APPPATH.'models/json/';
+	protected $_mode = 'classic'; // classic or join
 	
+    /**
+	 * @brief 
+	 * @returns 
+	 * 
+	 * 
+	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -37,29 +44,63 @@ class Core_model extends CI_Model {
 
 	/**
 	 * @brief 
-	 * @param $table 
-	 * @param $id 
-	 * @param $value 
+	 * @param $opt (std class) 
+	 * $opt->id 
+	 * $opt->value 
+	 * $opt->filter_field 
+	 * $opt->filter_value 
 	 * @returns 
 	 * 
 	 * 
 	 */
-	public function distinct($table,$id,$value){
+	public function distinct($opt){
 		try{
-			if (strpos($value,'@')){
-				$fields = 'CONCAT('.str_replace('@','," ",',$value).') AS ';
-				$as = ' '.str_replace('@','_',$value);
+		//	$table,$id,$value,$filter_field=null, $filter_value = null;
+			//echo debug($opt);
+			if (strpos($opt->value,'@')){
+				$fields = 'CONCAT_WS(" ",'.str_replace('@',',',$opt->value).') AS ';
+				$as = ' '.str_replace('@','_',$opt->value);
 			} else {
-				$fields = $value;
-				$as = $value;
+				$fields = $opt->value;
+				$as = $opt->value;
 			}
 			$this->db->distinct();
-			return $this->db->select("$id,$fields $as")->order_by("$as", 'asc' )->get($table)->result();
+			if ( isset($opt->filter_field) &&  isset($opt->filter_value) ){
+				$datas = $this->db->select("$opt->table.$opt->id,$fields $as")->where($opt->filter_field,$opt->filter_value)->order_by("$as", 'asc' )->get($opt->table)->result();
+			} else {
+				$datas = $this->db->select("$opt->table.$opt->id,$fields $as")->order_by("$as", 'asc' )->get($opt->table)->result();
+			}
+			//echo $this->db->last_query().'<BR/>';
+			$this->_debug_array[] = $this->db->last_query();
+
+			return $datas;
 		} catch (Exception $e) {
 			//echo 'Exception reçue : ',  $e->getMessage(), "\n";
 		}
 	}	
 	
+	/**
+	 * @brief 
+	 * @param $opt (std class) 
+	 * $opt->id 
+	 * $opt->value 
+	 * $opt->filter_field 
+	 * $opt->filter_value 
+	 * @returns 
+	 * 
+	 * 
+	 */
+	public function query($sql){
+		try{
+			$datas = $this->db->query($sql)->result();
+			//echo $this->db->last_query().'<BR/>';
+			$this->_debug_array[] = $this->db->last_query();
+
+			return $datas;
+		} catch (Exception $e) {
+			//echo 'Exception reçue : ',  $e->getMessage(), "\n";
+		}
+	}
 	
 	/**
 	 * @brief 
@@ -79,42 +120,6 @@ class Core_model extends CI_Model {
 			if ($defs->rules){
 				$this->required[] = $field;
 			}
-
-			switch($defs->type){
-				case 'month':
-				case 'checkbox':
-				case 'select':
-				case 'memo':
-				case 'check':
-					$data = array();
-					if (isset($defs->values) AND $defs->values){
-						foreach($defs->values AS $key=>$value){
-							$data[$key] = $value;
-						}
-					}
-					$defs->values = $data;
-				break;
-				case 'typeahead':
-				case 'select_database':
-				  $datas_select = array();
-				  preg_match('/(\w+)\((\w+)\,(\w+)\:(.*)\)/', $defs->values, $param);
-				  if (method_exists($this,$param[1])){
-					  $datas = $this->{$param[1]}($param[2],$param[3],$param[4]);
-				  } 
-				 
-				  if (strpos($param[4],'@')){
-					$param[4] = str_replace('@','_',$param[4]);
-				  }			  
-				  foreach($datas AS $data){
-					$datas_select[$data->{$param[3]}] = $data->{$param[4]};
-				  }
-				  $defs->values = $datas_select;
-				  if ($defs->type == 'select_database')
-					$defs->type = 'select';
-				break;
-				default:
-					$defs->values = [];
-			}
 			//FIELD OBJECT ELEMENT
 			$fileobject = APPPATH.'libraries/elements/element_'.$defs->type.'.php';
 			if (is_file($fileobject)){
@@ -124,13 +129,35 @@ class Core_model extends CI_Model {
 				require_once(APPPATH.'libraries/elements/element.php');
 				$object_name = 'element';
 			}
-			$defs->element = new $object_name;
+			$obj = new $object_name;
 			foreach($defs AS $key => $value){
-				$defs->element->_set($key , $value);
+				$obj->_set($key , $value);
+			}			
+			if ($obj->_get('param')){
+				$op_mg = $obj->SetParams();
+				//echo debug($op_mg);
+
+				if (isset($op_mg->method) && method_exists($this,$op_mg->method)){
+					//echo debug($op_mg);
+					$datas_select = [];
+					$datas = $this->{$op_mg->method}($op_mg);
+					if (count($datas)){
+						foreach($datas AS $data){
+							$datas_select[$data->{$op_mg->key}] = $data->{$op_mg->data};
+						}
+					}
+					//echo debug($datas_select);
+					$obj->_set('values', $datas_select);
+				}
+			} else {
+				//$obj->_set('values', $defs->values);	
+				if (method_exists($obj,'SetValues')){//new methode for set datas
+					$obj->SetValues();
+				}
 			}
-			$defs->element->_set('values', $defs->values);	
-			$defs->element->_set('name', $field);
-			$this->defs[$field] = $defs;
+
+			$obj->_set('name', $field);
+			$this->defs[$field] = $obj;
 		}
 	}
 	
@@ -153,7 +180,7 @@ class Core_model extends CI_Model {
 	 * 
 	 * 
 	 */
-	public function is_exist($field = 'id' ,$value, $fields = null){
+	public function is_exist($field = 'id' ,$value = null, $fields = null){
 		$query = $this->db->get_where($this->table , (($fields) ? $fields:array($field => $value)) );
 		$this->_debug_array[] = $this->db->last_query();
 		
@@ -170,7 +197,6 @@ class Core_model extends CI_Model {
 	 * 
 	 */
 	public function get_all(){
-		//echo debug($this->filter);
 		if (is_array($this->filter) AND count($this->filter)){
 			foreach($this->filter AS $key => $value){
 				$this->db->where($key , $value);
@@ -282,6 +308,21 @@ class Core_model extends CI_Model {
 			}
 		} 	
 	}	
+
+	function _setField($field){
+		$def = $this->_get('defs')[$field];
+		if (isset($def->table[$field])){
+			$this->_mode = 'join';
+			$this->db->join($def->table[$field],$this->table.'.'.$field.'='.$def->table[$field].'.'.$def->foreignKey[$field], 'left' );
+			return $def->table[$field].'.'.$def->foreignField[$field];
+		} else {
+			if ($this->_mode == 'join'){
+				return $this->table.'.'.$field.'';
+			} else {
+				return $field;
+			}
+		}		
+	}
 	
 
 	/**
@@ -295,9 +336,9 @@ class Core_model extends CI_Model {
 			$this->db->group_start();
 			foreach($this->autorized_fields_search AS $key => $value){
 				if (!$key AND is_array($this->filter) AND count($this->filter)){
-					$this->db->like($value , $this->global_search);
+					$this->db->like( $this->_setField($value) , $this->global_search);
 				} else {
-					$this->db->or_like($value , $this->global_search);
+					$this->db->or_like( $this->_setField($value)  , $this->global_search);					
 				}
 			}
 			$this->db->group_end();
@@ -315,11 +356,29 @@ class Core_model extends CI_Model {
 		if (!$this->nb){
 			$this->_set_filter();
 			$this->_set_search();
-			$this->nb = $this->db->select( $this->key )->get($this->table)->num_rows();
+			$this->nb = $this->db->select( $this->table.'.'.$this->key )->get($this->table)->num_rows();
 		} 
+		$this->_debug_array[] = 'get_pagination : '. $this->nb; 
 		return $this->nb;
 	}	
 	
+
+	function _set_list_fields(){
+		$string_field = '';
+		if ($this->autorized_fields){
+			foreach($this->autorized_fields AS $field ){
+				if ($this->_mode == 'join'){
+					$string_field .= $this->table.'.'.$field.',';
+				} else {
+					$string_field .= $field.',';
+				}
+			}
+			$string_field .= substr($string_field,-1);
+		} else {
+			$string_field = '*';
+		} 
+		return $string_field;
+	}
 
     /**
 	 * @brief 
@@ -335,7 +394,7 @@ class Core_model extends CI_Model {
 				$this->page = 1 ;
 			$this->db->limit(intval($this->per_page), ($this->page - 1 ) * $this->per_page);
 		}
-        $datas = $this->db->select( ($this->autorized_fields ? implode(',',$this->autorized_fields) : '*' ) )
+        $datas = $this->db->select( $this->_set_list_fields()  )
                            ->order_by($this->order, $this->direction )
                            ->get($this->table);
 		$this->_debug_array[] = $this->db->last_query();
@@ -348,12 +407,15 @@ class Core_model extends CI_Model {
 	 * 
 	 * 
 	 */
-	public function put()
+	public function put($id = null)
 	{
 		foreach ($this->datas AS $field=>$data){
 			if (!in_array($field, $this->autorized_fields)){
 				unset($this->datas[$field]);
 			}
+		}
+		if ($id){
+			$this->key_value = $id;
 		}
 		$this->db->where($this->key, $this->key_value);
 		$this->db->update($this->table, $this->datas);		
@@ -403,8 +465,12 @@ class Core_model extends CI_Model {
 	 */
 	public function __destruct(){
 		if ($this->_debug){
-			echo '<pre><code>'.print_r($this->_debug_array ,1).'</code></pre>';
+			echo debug($this->_debug_array, __file__);
+			//$this->CI->bootstrap_tools->render_debug($this->_debug_array);
+			foreach($this->_debug_array AS $msg)
+				log_message('debug', debug($msg, get_class($this)));			
 		}
+
 	}	
 
 }

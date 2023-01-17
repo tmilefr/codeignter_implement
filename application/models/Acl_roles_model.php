@@ -15,13 +15,55 @@ class Acl_roles_model extends Core_model{
 		$this->_init_def();
 	}
 
-	function GetRoles($id = null){
+	function SetRoles($id = null){
 		if ($id){
-			$this->db->set('id', $id_ctrl);
+			$this->db->set('id', $id);
 			$this->db->where('id_ctrl', 0);
 			$this->db->update($this->table);	
 			$this->_debug_array[] = $this->db->last_query();
 		}
+	}
+
+	/**
+	 * @brief Get permissions from database for  particular role
+	 *
+	 * SELECT `id_role`,`controller`,`action` FROM `acl_roles_controllers` AS ARC LEFT JOIN `acl_controllers` AC ON ARC.id_ctrl = AC.ID LEFT JOIN `acl_actions` AA ON ARC.id_act = AA.ID
+	 * 
+	 * @param   int $roleId
+	 * @return  array
+	 */
+	public function getRolePermissions($roleId = 0)
+	{
+	    if ($roleId){
+			$query = $this->db->select([
+				"controller",
+				"action",
+				"arc.id_role"
+			])
+			->from('acl_roles_controllers ARC')
+			->join('acl_controllers AC', "ARC.id_ctrl = AC.ID")
+			->join('acl_actions AA', "ARC.id_act = AA.ID")
+			->where("arc.id_role", $roleId)
+			->get();
+		} else {
+			$query = $this->db->select([
+				"controller",
+				"action",
+				"arc.id_role"
+			])
+			->from('acl_roles_controllers ARC')
+			->join('acl_controllers AC', "ARC.id_ctrl = AC.ID")
+			->join('acl_actions AA', "ARC.id_act = AA.ID")
+			->get();
+		}
+		$permissions = array();
+
+		// Add to the list of permissions
+		foreach ($query->result_array() as $row)
+		{		    
+			$permissions[$row['id_role']][] = strtolower($row['controller'] . '/' . $row['action']);
+		}
+		return $permissions;
 	}
 
 }

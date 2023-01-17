@@ -5,36 +5,68 @@ Class Bootstrap_tools{
 	protected $CI = null; //base controller 
 
 	protected $_head = array();
+	protected $_asset_img = '/assets/img/';
+
 
 	public function __construct(){
 		$this->CI =& get_instance();
 		$this->_SetHead('assets/js/jquery-3.3.1.min.js','js');
+		$this->_SetHead('assets/js/app.js','js');
 		$this->_SetHead('assets/vendor/bootstrap/js/bootstrap.bundle.js','js');
 
 		$this->_SetHead('assets/vendor/bootstrap/css/bootstrap.min.css','css');
 		$this->_SetHead('assets/vendor/open-iconic/css/open-iconic-bootstrap.css','css');
 		$this->_SetHead('assets/css/app.css','css');
 
+		$this->_SetHead('assets/css/nicdark_style.css','css');
+		$this->_SetHead('assets/css/nicdark_responsive.css','css');
+		// menu 4 mobile
+		$this->_SetHead('assets/js/plugins/menu/tinynav.min.js','js');
+
+		// google fonts
+		$this->_SetHead('http'.((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 's':'').'://fonts.googleapis.com/css?family=Montserrat:400,700','font');//font-family: 'Montserrat', sans-serif;
+		$this->_SetHead('http'.((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 's':'').'://fonts.googleapis.com/css?family=Raleway','font'); // font-family: 'Raleway', sans-serif;
+		$this->_SetHead('http'.((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 's':'').'://fonts.googleapis.com/css?family=Montez','font'); //font-family: 'Montez', cursive;
+
 		/* UI TOOLS */
-		$this->_SetHead('assets/js/toggle_menu.js','js');
 		$this->_SetHead('assets/js/confirm.js','js');
 		
 	}
 	
+	public function __destruct()
+	{
+		//echo debug($this->_head);
+	}
+	/**
+	 * 
+	 */
 	function _SetHead($file,$type){
-		$this->_head[$type][$file] = $file;
+		if ($type == "txt")
+			$this->_head[$type][] = $file;
+		else 
+			$this->_head[$type][$file] = $file;
 	}
 	
-	
+	public function RenderImg($file, $alt = ""){
+		return '<img src="'.base_url().$this->_asset_img.$file.'" alt="'.$alt.'">';
+	}
+
 	function RenderAttachFiles($opt = 'js'){
-		foreach($this->_head[$opt] AS $file){
-			switch($opt){
-				case 'js':
-					echo  '<script src="'.base_url().$file.'"></script>'."\n";
-				break;
-				case 'css':
-					echo '<link rel="stylesheet" href="'.base_url().$file.'">'."\n";
-				break;
+		if (isset($this->_head[$opt])){
+			foreach($this->_head[$opt] AS $file){
+				switch($opt){
+					case 'js':
+						echo  '<script src="'.base_url().$file.'"></script>'."\n";
+					break;
+					case 'font':
+						echo '<link rel="stylesheet" href="'.$file.'">'."\n";
+					break;
+					case 'css':
+						echo '<link rel="stylesheet" href="'.base_url().$file.'">'."\n";
+					break;
+					case 'txt':
+						echo $file;
+				}
 			}
 		}
 	}
@@ -76,6 +108,13 @@ Class Bootstrap_tools{
 	}
 	
 	
+	/**
+	 * @param mixed $field 
+	 * @param mixed $values 
+	 * @param mixed $url 
+	 * @param string $null_value 
+	 * @return string 
+	 */
 	public function render_dropdown($field,$values, $url, $null_value = ''){
 		$string_render_dropdown = '';
 		if (is_array($values) AND count($values)){
@@ -94,7 +133,7 @@ Class Bootstrap_tools{
 	
 	function render_debug($messages){
 		if (is_array($messages) AND count($messages)){
-			echo '<a class="btn btn-warning btn-sm" data-toggle="collapse" href="#collapseDEBUG" role="button" aria-expanded="false" aria-controls="collapseExample">DEBUG</a>';
+			echo '<a class="btn btn-warning btn-sm padding160" data-toggle="collapse" href="#collapseDEBUG" role="button" aria-expanded="false" aria-controls="collapseExample">DEBUG</a>';
 			echo '<div class="collapse" id="collapseDEBUG">';
 			echo '<table class="table table-sm">';
 			foreach($messages AS $message){
@@ -112,43 +151,54 @@ Class Bootstrap_tools{
 		return '<label for="input'.$name.'">'.$this->CI->lang->line($name).'</label>';
 	}
 	
-	public function textarea($field, $value, $message = '', $required = false){
-		return '<label for="validationTextarea">Textarea</label>
-		<textarea class="form-control" id="validationTextarea" placeholder="'.$message.'" '.(($required) ? 'required':'').'>'.$value.'</textarea>';
+	public function textarea($field, $value, $message = '', $required = false,$rows = 10){
+		return '<textarea  rows="'.$rows.'" class="form-control" id="'.$field.'" name="'.$field.'" placeholder="'.$message.'" '.(($required) ? 'required':'').'>'.$value.'</textarea>';
 	}
 
 	public function input_checkbox($field, $value){
 		return form_checkbox($field, 1 , $value , ' class="form-check-input" id="input'.$field.'" ');
 	}
 	
-	public function input_date($name,$value){
+	public function input_date($name,$value, $datatarget = null){
 		$this->_SetHead('assets/js/datepicker_start.js','js');
 		
 		if (!$value OR $value == '0000-00-00'){
 			$value = date('Y-m-d');
 		}
-		
 		return '<div class="input-group">
-				  <input autocomplete="off" class="form-control datepicker" name="'.$name.'" id="input'.$name.'" value="'.$value.'" type="text">
+				  <input autocomplete="off" class="form-control datepicker" '.(($datatarget) ? 'data-target="'.$datatarget.'"':'').' name="'.$name.'" id="input'.$name.'" value="'.$value.'" type="text">
 				  <div class="input-group-append">
 					 <span class="input-group-text"><span class="oi oi-calendar"></span></span>
 				  </div>
 			  </div>';
 	}
 	
+	public function input_time($name,$value, $datatarget = null){
+		return '<div class="input-group">
+				  <input autocomplete="off" class="form-control timepicker" '.(($datatarget) ? 'data-target="'.$datatarget.'"':'').' name="'.$name.'" id="input'.$name.'" value="'.$value.'" type="text">
+				  <div class="input-group-append">
+					 <span class="input-group-text"><span class="oi oi-timer"></span></span>
+				  </div>
+			  </div>';
+	}
 
 	
 	
-	public function input_text($name,$placeholder = '',$value = ''){
-		return '<input type="text" class="form-control" name="'.$name.'" id="input'.$name.'" placeholder="'.$placeholder.'" value="'.$value.'">';
+	public function input_text($name, $placeholder = '',$value = '', $label = false, $datatarget = null){
+		if ($label){
+			return '<div class="form-group"><label for="'.$name.'">'.$placeholder.'</label><input '.(($datatarget) ? 'data-target="'.$datatarget.'"':'').' type="text" class="form-control" name="'.$name.'" id="input'.$name.'" value="'.$value.'"></div>';
+		} else {
+			return '<input type="text" class="form-control" name="'.$name.'" id="input'.$name.'" placeholder="'.$placeholder.'" value="'.$value.'">';
+		}
+
 	}
-	public function password_text($name,$placeholder = '',$value = ''){
-		return '<input type="password" class="form-control" name="'.$name.'" id="input'.$name.'" placeholder="'.$placeholder.'" value="'.$value.'">';
+	public function password_text($name, $placeholder = '',$value = '' , $opt = ''){
+		return '<input type="password" class="form-control" '.$opt.' name="'.$name.'" id="input'.$name.'" placeholder="'.$placeholder.'" value="'.$value.'">';
 	}
 
 	
 	public function input_select($name, $values, $selected = ''){
-		$input_select = '<select id="input'.$name.'" name="'.$name.'" class="form-control">';
+		$input_select = '<select id="input'.$name.'" name="'.$name.'" class="form-control custom-select">';
 		$input_select .= '<option '.(($selected == '') ? 'selected="selected"':'').'>...</option>';
 		foreach($values AS $key=>$value){
 			$input_select .= '<option value="'.$key.'" '.(($key == $selected AND $selected) ? 'selected="selected"':'').'>'.$value.'</option>';
@@ -165,5 +215,9 @@ Class Bootstrap_tools{
 		return $this->random_color_part() . $this->random_color_part() . $this->random_color_part();
 	}
 	
+	function render_msg($value, $type = 'alert-danger'){
+		echo '<div class="alert '.$type.'" role="alert">'.$value.'</div>';
+	}
 	
+
 }
