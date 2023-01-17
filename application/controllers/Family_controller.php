@@ -18,19 +18,15 @@ class Family_controller extends MY_Controller {
 		$this->_model_name 		= 'Family_model';	   //DataModel
 		$this->_edit_view 		= 'edition/Family_form';//template for editing
 		$this->_list_view		= 'unique/Family_view.php';
-		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true,'update'=>false);
+		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true);
 		
 		
-		$this->title .= $this->lang->line($this->_controller_name);
+		$this->title .= ' - '.$this->lang->line($this->_controller_name);
 		
 		$this->_set('_debug', TRUE);
 		$this->init();
+		
+		
 	}
-
-	function feeder(){
-		$this->LoadJsonData( 'Family_data.json', $this->_model_name, 'Family');
-	}
-
-	
 
 }

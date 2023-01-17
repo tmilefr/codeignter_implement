@@ -8,15 +8,18 @@
 					<li class="nav-item">
 						
 					</li>
-					<li class="nav-item">
+					<?php /* //TODO : perpage<li class="nav-item">
 						<?php echo ((isset($this->pagination)) ? $this->pagination->create_perpage():'');?>
-					</li>
+					</li> */ ?>
 					<li class="nav-item">
 					<?php echo $footer_line;?>
 					</li> 
 				</ul>
 				<span class="navbar-text">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></span>
 			</nav>
+
+			<?php //echo $this->_render_debug(); ?>
+
 		</div>
 	</div>
 
@@ -39,6 +42,28 @@
 		</div>
 	  </div>
 	</div>
+	
+	<!- modal tools for delete ->
+	<div id="confirmModal" class="modal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title"><?php echo Lang('DELETE_CONFIRMATION');?></h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<p><?php echo Lang('TXT_DELETE_CONFIRMATION');?></p>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-success" data-dismiss="modal"><?php echo Lang('CANCEL');?></button>
+			<button type="button" class="btn btn-danger" id="confirmModalYes"><?php echo Lang('YES');?></button>
+		  </div>
+		</div>
+	  </div>
+	</div>	
+	
 	<!-- Optional JavaScript -->
 	<?php $this->bootstrap_tools->RenderAttachFiles('js');?>
   </body>
