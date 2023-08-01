@@ -74,7 +74,7 @@ Class Render_menu{
 									$menu .= '<li class="nav-item">
 									<a class="nav-link" href="'.base_url($element->url).'">
 									<div class="d-flex w-100 justify-content-start align-items-center">
-									<span class="oi '.$element->icon.'"></span>&nbsp;&nbsp;&nbsp; 
+									<span class="oi '.$element->icon.'"></span> 
 									<span class="collapse-text menu-collapsed">'.Lang($element->name).'</span>
 									</div></a>
 									</li>';

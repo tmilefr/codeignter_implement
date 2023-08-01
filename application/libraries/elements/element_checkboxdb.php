@@ -4,7 +4,6 @@
  * CHECKBOX Object in page
  * 
  */
-require_once(APPPATH.'libraries/elements/element.php');
 
 class element_checkboxdb extends element
 {	
@@ -20,11 +19,17 @@ class element_checkboxdb extends element
 
 	public function __construct(){
 		parent::__construct();
-		if ($this->model)
-			$this->CI->load->model($this->model);
+        $this->CI =& get_instance();
+        $this->_loadModel();
 	}
 
-	public function RenderFormElement(){
+    public function __destruct()
+    {
+        unset($this->CI);
+    }
+
+    function _getInBase(){
+        $this->_loadModel();
         $values = [];
         $id = $this->CI->render_object->_get('id');
         if ($id){
@@ -35,6 +40,12 @@ class element_checkboxdb extends element
                 $values[] = $obj->{$this->ref};
             }
         }
+        return $values;
+    }
+
+
+	public function RenderFormElement(){
+        $values = $this->_getInBase();
         $element = ''; 
         if (count($this->values)){
             foreach($this->values AS $key=>$value){
@@ -49,12 +60,21 @@ class element_checkboxdb extends element
         }
 		return $element;
 	}
+
+    private function _loadModel(){
+        if (!isset($this->CI->{$this->model}))
+            $this->CI->load->model($this->model);
+    }
 	
 	public function PrepareForDBA($value){
+        $this->_loadModel();
+
+
         $src_post = json_encode($value);
         $id = $this->CI->render_object->_get('id');
 		if (method_exists($this->CI->{$this->model},'DeleteLink'))
 			$this->CI->{$this->model}->DeleteLink($id);
+
         foreach($value AS $key=>$value){
             $obj = new StdClass();
             $obj->{$this->foreignkey} = $id;
@@ -66,10 +86,18 @@ class element_checkboxdb extends element
 	}
 
 	public function Render(){
-		return (($this->value) ? LANG($this->name.'_'.$this->value):$this->name.'_NO');
+        $values = $this->_getInBase();
+        $tmp  = '';
+        if (is_array($values))
+        foreach($values AS $val){
+            $tmp .= $this->values[$val].' - ';
+        }
+
+		return (($this->value) ? substr($tmp,0,-3):LANG($this->name.'_NO'));
 	}
 
     public function AfterExec($datas){
+        $this->_loadModel();
         if ($this->CI->render_object->_get('form_mod') != 'edit')
 		    $this->CI->{$this->model}->SetLink($this->foreignkey, $datas['id']);
 	}

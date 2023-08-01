@@ -4,15 +4,17 @@
  * PASSWORD Object in page
  * 
  */
-require_once(APPPATH.'libraries/elements/element.php');
 
 class element_password extends element
 {
+	
+	protected $change_password = null;
+	
 	public function __construct(){
 		parent::__construct();
-		if (isset($this->CI->bootstrap_tools))
+		if (isset($this->RenderTools))
 		{
-			$this->CI->bootstrap_tools->_SetHead('assets/js/togglefield.js','js');
+			$this->RenderTools->_SetHead('assets/js/togglefield.js','js');
 		}
 	}
 	
@@ -22,11 +24,11 @@ class element_password extends element
 			$txt = '<input type="hidden" name="'.$this->name.'" value="'.$this->value.'"><input class="form-control" type="text" value="********" readonly>';
 		else {
 			//en edition, le mot de passe est déjà crypt ... en relation avec le js togglefield
-			$txt = $this->CI->bootstrap_tools->password_text($this->name, $this->CI->lang->line($this->name) , $this->value, 'readonly');
+			$txt = $this->RenderTools->password_text($this->name, Lang($this->name) , $this->value, 'readonly');
 			$txt .= '<div class="form-check">
 						<input class="form-check-input togglefield" data-toggle="input'.$this->name.'" type="checkbox" name="'.$this->name.'_check" id="'.$this->name.'_check" value="change_password">
 						<label class="form-check-label" for="'.$this->name.'_check">
-						'.$this->CI->lang->line(''.$this->name.'_change').'
+						'.Lang(''.$this->name.'_change').'
 						</label>
 					</div>';
 		}
@@ -38,8 +40,11 @@ class element_password extends element
 	}
 
 	public function PrepareForDBA($value){
+		echo debug($this->CI->render_object->_get('post_data'));
+
+		die();
 		//en edition, le mot de passe est déjà crypt ...
-		if($this->CI->input->post($this->name.'_check') == "change_password"){
+		if($this->change_password == "change_password"){
 			return crypt($value, PASSWORD_SALT);
 		} else {
 			return $value;

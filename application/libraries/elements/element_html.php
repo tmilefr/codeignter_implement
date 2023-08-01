@@ -5,7 +5,6 @@
  * 
  */
 
-require_once(APPPATH.'libraries/elements/element.php');
 
 class element_html extends element
 {
@@ -19,10 +18,10 @@ class element_html extends element
 	
 	public function __construct(){
 		parent::__construct();
-		if (isset($this->CI->bootstrap_tools))
+		if (isset($this->RenderTools))
 		{
-			$this->CI->bootstrap_tools->_SetHead('assets/vendor/ckeditor5-build-classic/ckeditor.js','js');
-			$this->CI->bootstrap_tools->_SetHead('assets/vendor/ckeditor5-build-classic/translations/fr.js','js');
+			$this->RenderTools->_SetHead('assets/vendor/ckeditor5-build-classic/ckeditor.js','js');
+			$this->RenderTools->_SetHead('assets/vendor/ckeditor5-build-classic/translations/fr.js','js');
 		}
 	}
 
@@ -76,7 +75,7 @@ class element_html extends element
 				} );
 		</script>";
 
-		$this->CI->bootstrap_tools->_SetHead($js , 'txt');	
+		$this->RenderTools->_SetHead($js , 'txt');	
 
 	
 

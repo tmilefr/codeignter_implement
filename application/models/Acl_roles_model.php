@@ -5,14 +5,12 @@ class Acl_roles_model extends Core_model{
 
 	function __construct(){
 		parent::__construct();
-		$this->_set('_debug', FALSE);
 		
 		$this->_set('table'	, 'acl_roles');
 		$this->_set('key'	, 'id');
 		$this->_set('order'	, 'role_name');
 		$this->_set('direction'	, 'desc');
 		$this->_set('json'	, 'Acl_roles.json');
-		$this->_init_def();
 	}
 
 	function SetRoles($id = null){
@@ -34,15 +32,15 @@ class Acl_roles_model extends Core_model{
 	 */
 	public function getRolePermissions($roleId = 0)
 	{
-	    if ($roleId){
+		if ($roleId){
 			$query = $this->db->select([
 				"controller",
 				"action",
 				"arc.id_role"
 			])
-			->from('acl_roles_controllers ARC')
-			->join('acl_controllers AC', "ARC.id_ctrl = AC.ID")
-			->join('acl_actions AA', "ARC.id_act = AA.ID")
+			->from('acl_roles_controllers arc')
+			->join('acl_controllers AC', "arc.id_ctrl = AC.ID")
+			->join('acl_actions AA', "arc.id_act = AA.ID")
 			->where("arc.id_role", $roleId)
 			->get();
 		} else {
@@ -51,21 +49,22 @@ class Acl_roles_model extends Core_model{
 				"action",
 				"arc.id_role"
 			])
-			->from('acl_roles_controllers ARC')
-			->join('acl_controllers AC', "ARC.id_ctrl = AC.ID")
-			->join('acl_actions AA', "ARC.id_act = AA.ID")
+			->from('acl_roles_controllers arc')
+			->join('acl_controllers AC', "arc.id_ctrl = AC.ID")
+			->join('acl_actions AA', "arc.id_act = AA.ID")
 			->get();
 		}
+		$this->_debug_array[] = $this->db->last_query();
 		$permissions = array();
-
-		// Add to the list of permissions
-		foreach ($query->result_array() as $row)
-		{		    
-			$permissions[$row['id_role']][] = strtolower($row['controller'] . '/' . $row['action']);
+		if ($query && $query->num_rows() > 0)
+		{
+			// Add to the list of permissions
+			foreach ($query->result_array() as $row)
+			{		    
+				$permissions[$row['id_role']][] = strtolower($row['controller'] . '/' . $row['action']);
+			}
 		}
 		return $permissions;
 	}
 
 }
-?>
-

@@ -1,6 +1,10 @@
 <?php
-
 defined('BASEPATH') || exit('No direct script access allowed');
+
+//require_once(APPPATH.'libraries/Bootstrap_tools.php');
+
+require_once(APPPATH.'libraries/Autoload.php');
+
 /**
  * MY_Controller
  *
@@ -12,26 +16,48 @@ defined('BASEPATH') || exit('No direct script access allowed');
  */
 class MY_Controller extends CI_Controller {
 	
+	/* VARS*/
 	protected $_autorised_get_key 	= array('order','direction','filter','page','repertoire','search','id'); //autorised key in url
-	protected $_redirect			= true;
-	protected $_model_name			= FALSE;
+	protected $_redirect			= true; //redirect page after POST
+	protected $_model_name			= FALSE; 
 	protected $_debug_array  		= array();
 	protected $_debug 				= FALSE;
+	/* used for right */
 	protected $_controller_name 	= null; 
 	protected $_action			 	= null;
 	protected $_rules				= null;
 	protected $_autorize			= array();
 	protected $_search  			= false;
-	
+	protected $_dba_data				= null;
+		
+	protected $_edit_view = '';
+	protected $_list_view = '';
+	protected $_bg_color = '';
 	protected $view_inprogress 		= null;
 	protected $data_view 			= array();
 	protected $title 				= '';
 	protected $json = null;
 	protected $json_path = APPPATH.'models/json/';
-	protected $per_page	= 15;
+	protected $per_page	= 15;//pagination
 	protected $next_view = 'list';
-	protected $render_view = true;
-					
+	protected $render_view = true; //render view @ end of process or not ? used for decoration.
+	protected $_api  = FALSE; //trois mode possible, HTML par defaut, CLI dépendant de PHP_SAPI et API dépendant de cette variable.
+
+	/* Each CI STD Object for PHP 8*/
+	public $lang = null;
+	public $config = null;
+	public $render_object = null;
+	public $bootstrap_tools = null;
+	public $form_validation = null;
+	public $acl = null;
+	public $input = null;
+	public $output = null;
+	public $render_menu = null;
+	public $session = null;
+	public $uri = null;
+	public $router = null;
+	public $pagination = null;
+	
 	/**
 	 * @brief Generic Constructor
 	 * @returns  void()
@@ -43,14 +69,16 @@ class MY_Controller extends CI_Controller {
 		parent::__construct();
 		$this->load->helper('tools');
 		$this->load->library('Render_object');
-		$this->load->library('bootstrap_tools');
+
+		$this->bootstrap_tools = Bootstrap_tools::get_instance(); //need to change $this->load method for singleton loading
+
 		$this->load->library('acl');
 		$this->load->library('Render_menu');
 
 		$this->lang->load('traduction');
+		
 		$this->config->load('app');
 		$this->config->load('secured');
-		
 	}
 	
 	public function SaveToJson($name, $data){
@@ -111,7 +139,7 @@ class MY_Controller extends CI_Controller {
 	 * 
 	 */
 	function init(){
-		$this->process_url();
+		$this->_process_url();
 		//echo debug( $this->uri->segment_array());
 
 		$this->data_view['app_name'] 	= $this->config->item('app_name'); 
@@ -129,12 +157,22 @@ class MY_Controller extends CI_Controller {
 				$this->output->enable_profiler(TRUE);
 			break;
 		}
+
+		$option = [
+			'filter'=>$this->session->userdata($this->set_ref_field('filter')),
+			'direction'=>$this->session->userdata($this->set_ref_field('direction')),
+			'config'=>$this->config
+		];
+
+		$this->render_object->SetOption($option);
+
+
 		if ($this->_model_name){
-			$this->load->model($this->_model_name);
+			$this->LoadModel($this->_model_name);
+			$this->render_object->_set('datamodel', $this->_model_name);
+			$this->bootstrap_tools->_set('_controller_name', $this->_controller_name);
+			/* TODO */
 			$this->data_view['_model_name'] = $this->_model_name;// Need ?
-			$this->render_object->_set('datamodel',	$this->_model_name); 
-			$this->render_object->Set_Rules_elements();
-			$this->{$this->_model_name}->_set('_debug', $this->_debug);
 		}
 		//Create CRUD URL		
 		foreach($this->_autorize AS $key=>$value){
@@ -143,7 +181,7 @@ class MY_Controller extends CI_Controller {
 		$this->render_menu->init();
 		//to permit use it in view.
 		$this->render_object->_set('_ui_rules' , $this->_rules);
-		$this->_debug($this->_rules);
+		$this->_debug($this->_rules, __FUNCTION__, '_ui_rules', __FILE__,181);
 
 		$search_object 					= new StdClass();
 		$search_object->url 			= $this->router->class.'/'.$this->router->method;
@@ -151,44 +189,27 @@ class MY_Controller extends CI_Controller {
 		$search_object->autorize 		= FALSE;
 		$this->data_view['search_object'] = $search_object;
 	}
-	
-	
-	
+		
 	/**
-	 * @brief Set Rules for CRUD URL
-	 * @param $key 
-	 * @param $value 
-	 * @returns 
-	 * 
-	 * 
+	 * Method LoadModel
+	 *
+	 * @param $model $model [explicite description]
+	 *
+	 * @return void
 	 */
-	function _set_ui_rules($key,$value){
-		$rules = new StdClass();
-		$rules->url 	=  base_url($this->_controller_name.'/'.$key);
-		$rules->term 	= $key;
-		$rules->name 	= $this->lang->line(strtoupper($key).'_'.$this->_controller_name);
-		if (!$this->acl->hasAccess(strtolower($this->_controller_name.'/'.$key))){
-			$value = FALSE;
-		} 
-		$rules->autorize= $value;
-		$rules->icon 	= $this->lang->line($key.'_icon');
-		$rules->class  = $this->lang->line($key.'_class');
-		$this->_rules[$key] = $rules;
+	public function LoadModel($model){
+		//echo debug($model);
+		$this->load->model($model);
+		$this->{$model}->_set('_debug', $this->_debug);
+		$this->{$model}->_init_def(); //here for option event
+
+		$this->_debug($model, __FUNCTION__, 'init', __FILE__,203);
+		
+		$config = $this->render_object->Set_Rules_elements($model, $this->{$model}); //loading Infos_model ELements	
+		$this->form_validation->_SetRules($config,$model);
 	}
-
-	/**
-	 * @brief 		Destructor
-	 * @param       $this->_debug boolean
-	 * @return      void()
-	 * 
-	 * 
-	 */
-	function __destruct(){
-		if ($this->_debug){
-			echo debug($this->_debug_array, __file__);
-		}
-	}	
-
+	
+	
 	/**
 	 * @brief 		Render View in Template
 	 * @param       $this->view_inprogress
@@ -207,61 +228,6 @@ class MY_Controller extends CI_Controller {
 		}
 	}
 
-	/**
-	 * @brief _debug : Set Debug Array
-	 * @param       $this->_debug_array
-	 * @param		$msg (string)
-	 * @return      void()
-	 * 
-	 * 
-	 */
-	function _debug($message , $from = null , $type = null, $file = null, $line = null){
-		$msg = new Stdclass();
-		$msg->message = $message;
-		$msg->from = $from;
-		$msg->type = $type;
-		$msg->file = $file;
-		$msg->line = $line;
-		
-		$this->_debug_array[] = $message;
-	}
- 
-	/**
-	 * @brief Processing variable on url
-	 * @returns $this->session
-	 * 
-	 * 
-	 */
-	public function process_url(){
-		if ($this->input->post('global_search')){
-			$this->session->set_userdata( $this->set_ref_field('global_search') ,$this->input->post('global_search'));
-		}
-		$this->_action = $this->uri->segment(2, 0);
-
-		$array = $this->uri->uri_to_assoc(3);
-		foreach($array AS $field=>$value){
-			if (in_array($field,$this->_autorised_get_key)){
-				switch($field){
-					case 'search':
-						$this->session->set_userdata( $this->set_ref_field('global_search') ,'');
-					break;
-					case 'filter':
-						$filtered = $this->session->userdata( $this->set_ref_field('filter') );
-						if ($array['filter_value'] == 'all'){
-							unset($filtered[$value]);
-						} else {
-							$filtered[$value] = $array['filter_value'];
-						}
-						$this->session->set_userdata( $this->set_ref_field('filter') , $filtered );
-					break;
-					default:
-						$this->session->set_userdata( $this->set_ref_field($field) , $value );
-					break;
-				}
-			}
-		}
-	} 
-	
 	/**
 	 * @brief Attach variable to controller name
 	 * @param $name 
@@ -303,10 +269,6 @@ class MY_Controller extends CI_Controller {
 			$this->{$this->_model_name}->_set('page', 1 );
 		}
 		$this->pagination->initialize($config);	
-
-		$this->_debug(print_r($config,TRUE), 'list' , 'debug', __file__ , __line__ );		
-		$this->_debug($this->set_ref_field('page'));
-		$this->_debug($this->session->userdata($this->set_ref_field('page')));
 		//GET DATAS
 		$this->data_view['fields'] 	= $this->{$this->_model_name}->_get('autorized_fields');
 		$this->data_view['datas'] 	= $this->{$this->_model_name}->get();
@@ -326,8 +288,8 @@ class MY_Controller extends CI_Controller {
 		if ($id){
 			$this->render_object->_set('id',		$id);
 			$this->{$this->_model_name}->_set('key_value',$id);
-			$dba_data = $this->{$this->_model_name}->get_one();
-			$this->render_object->_set('dba_data',$dba_data);
+			$this->_dba_data = $this->{$this->_model_name}->get_one();
+			$this->render_object->_set('dba_data',$this->_dba_data);
 		}	
 		$this->_set('view_inprogress',$this->_list_view);
 		if ($this->render_view)
@@ -386,12 +348,14 @@ class MY_Controller extends CI_Controller {
 		}		
 		
 		//$this->form_validation->set_rules('passconf', 'Password Confirmation', 'trim|required|matches[password]');
-		if ($this->form_validation->run($this->_model_name) === FALSE){
-			$this->_debug(validation_errors(),'edit','form_validation',__FILE__,__LINE__);
-		} else {
-			$datas = $this->_ProcessPost($this->_model_name);
-			if ($this->_redirect){
-				redirect($this->_get('_rules')[$this->next_view]->url);
+		if ($this->input->post('form_mod')){
+			if ($this->form_validation->run($this->_model_name) === FALSE){
+				$this->_debug(validation_errors(),'edit','form_validation',__FILE__,__LINE__);
+			} else {
+				$datas = $this->_ProcessPost($this->_model_name);
+				if ($this->_redirect){
+					redirect($this->_get('_rules')[$this->next_view]->url);
+				}
 			}
 		}
 		
@@ -401,8 +365,81 @@ class MY_Controller extends CI_Controller {
 		$this->render_view();
 	}
 
+	/**
+	 * @brief Router Default 
+	 * @returns 
+	 * 
+	 * 
+	 */
+	public function index(){
+		redirect($this->_get('_rules')['list']->url);
+	}
 
+	/**
+	 * Method _debug : Set Debug Array
+	 *
+	 * @param $message $message [explicite description]
+	 * @param $from $from [explicite description]
+	 * @param $type $type [explicite description]
+	 * @param $file $file [explicite description]
+	 * @param $line $line [explicite description]
+	 *
+	 * @return void
+	 */
+	function _debug($message , $from = null , $type = null, $file = null, $line = null){
+		$msg = new Stdclass();
+		$msg->message = $message;
+		$msg->from = $from;
+		$msg->type = $type;
+		$msg->file = $file;
+		$msg->line = $line;
+		
+		$this->_debug_array[] = $msg;
+	}
+ 		
+	/**
+	 * Method _process_url : Processing variable on url
+	 *
+	 * @return void
+	 */
+	private function _process_url(){
+		if ($this->input->post('global_search')){
+			$this->session->set_userdata( $this->set_ref_field('global_search') ,$this->input->post('global_search'));
+		}
+		$this->_action = $this->uri->segment(2, 0);
 
+		$array = $this->uri->uri_to_assoc(3);
+		foreach($array AS $field=>$value){
+			if (in_array($field,$this->_autorised_get_key)){
+				switch($field){
+					case 'search':
+						$this->session->set_userdata( $this->set_ref_field('global_search') ,'');
+					break;
+					case 'filter':
+						$filtered = $this->session->userdata( $this->set_ref_field('filter') );
+						if ($array['filter_value'] == 'all'){
+							unset($filtered[$value]);
+						} else {
+							$filtered[$value] = $array['filter_value'];
+						}
+						$this->session->set_userdata( $this->set_ref_field('filter') , $filtered );
+					break;
+					default:
+						$this->session->set_userdata( $this->set_ref_field($field) , $value );
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Method _ProcessPost
+	 *
+	 * @param $model_name $model_name [explicite description]
+	 * @param $override_fields $override_fields [explicite description]
+	 *
+	 * @return void
+	 */
 	function _ProcessPost($model_name, $override_fields = null){
 		$datas = array();
 		if ($override_fields){
@@ -410,6 +447,7 @@ class MY_Controller extends CI_Controller {
 		} else{
 			$fields = $this->{$model_name}->_get('autorized_fields');
 		}
+		$this->Render_Object->_set('post_data', $this->input->post());
 		foreach($fields AS $field){
 			if (method_exists($this->{$model_name}->_get('defs')[$field],'PrepareForDBA')){
 				$datas[$field] 	= $this->{$model_name}->_get('defs')[$field]->PrepareForDBA($this->input->post($field));
@@ -438,14 +476,52 @@ class MY_Controller extends CI_Controller {
 	}
 
 	/**
-	 * @brief Router Default 
+	 * @brief Set Rules for CRUD URL
+	 * @param $key 
+	 * @param $value 
 	 * @returns 
 	 * 
 	 * 
 	 */
-	public function index(){
-		redirect($this->_get('_rules')['list']->url);
+	function _set_ui_rules($key,$value){
+		$rules = new StdClass();
+		$rules->url 	=  base_url($this->_controller_name.'/'.$key);
+		$rules->term 	= $key;
+		$rules->name 	= $this->lang->line(strtoupper($key).'_'.$this->_controller_name);
+		if (!$this->acl->hasAccess(strtolower($this->_controller_name.'/'.$key))){
+			$value = FALSE;
+		} 
+		$rules->autorize= $value;
+		$rules->icon 	= $this->lang->line($key.'_icon');
+		$rules->class  = $this->lang->line($key.'_class');
+		$this->_rules[$key] = $rules;
 	}
+
+	/**
+	 * @brief 		Destructor
+	 * @param       $this->_debug boolean
+	 * @return      void()
+	 * 
+	 * 
+	 */
+	function __destruct(){
+		if ($this->_debug){
+			echo debug($this->_debug_array, __file__);
+		}
+	}	
+
+	/**
+	 * Simple Render METHOD JS output
+	 * 
+	 * @param mixed $code 
+	 * @param mixed $data 
+	 * @return void 
+	 */
+	public function _renderJson($code, $data){
+		http_response_code($code);
+		echo json_encode($data);
+	}
+
 	
 	/**
 	 * @brief Generic SETTER

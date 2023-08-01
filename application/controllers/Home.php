@@ -9,7 +9,6 @@ class Home extends MY_Controller {
 		$this->_model_name 		= 'Acl_users_model';	   //DataModel
 		$this->title .= $this->lang->line($this->_controller_name);
 		$this->data_view['content'] = '';
-		$this->_set('_debug', FALSE);
 		$this->load->library('Acl');
 		//$this->load->model('Acl_users_model');
 		$this->init();

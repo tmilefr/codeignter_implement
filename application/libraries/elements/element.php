@@ -5,6 +5,8 @@
  * 
  */
 
+ //require_once(APPPATH.'libraries/Bootstrap_tools.php');
+
 class element
 {
 	protected $mode; //view, form.
@@ -14,14 +16,19 @@ class element
 	protected $type 	= '';
 	protected $mutliple	= FALSE;
 	protected $parent_id= 0;
-	protected $disabled = false;
-	protected $label = false;
-	protected $_debug = false;
-	protected $param = '';
+	protected $disabled = FALSE;
+	protected $label 	= FALSE;
+	protected $_debug 	= FALSE;
+	protected $param	= '';
 	protected $overridename = '';
 	protected $datatarget = '';
-	protected $change = '';
-	
+	protected $change 	= '';
+	protected $_controller_name = '';
+
+	/* Singleton for sharing with CI */
+	public $RenderTools = null; 
+	public $render_object = null;
+
 	public function SetMultiple($action = 'FALSE'){
 		$this->name = str_replace(['[',']'],['',''], $this->name);
 		$this->mutliple = $action;
@@ -45,7 +52,7 @@ class element
 		if ($this->disabled)
 			$txt = '<input type="hidden" name="'.$this->GetName().'" value="'.$this->value.'"><input class="form-control" type="text" value="'.$this->Render().'" readonly>';
 		else
-			$txt = $this->CI->bootstrap_tools->input_text( $this->GetName() , $this->CI->lang->line($this->name) , $this->value, $this->label, $this->datatarget);
+			$txt = $this->RenderTools->input_text( $this->GetName() , Lang($this->name) , $this->value, $this->label, $this->datatarget);
 		return $txt;
 	}
 	
@@ -103,7 +110,12 @@ class element
 	 */
 	public function __construct()
 	{
-		$this->CI =& get_instance();
+		/*****
+		/* $this->CI =& get_instance(); //trop de dépendance croisée. TODO : PUSH data in OBJECT instead of GET DATA in OBJECT
+		/* Utilisation d'un singleton à la place
+		******/
+		$this->render_object = Render_object::get_instance(); 
+		$this->RenderTools 	 = Bootstrap_tools::get_instance();
 	}
 
 	/**
@@ -112,7 +124,7 @@ class element
 	 */
 	public function __destruct()
 	{
-		unset($this->CI);
+		//unset($this->CI);
 		if ($this->_debug)
 			echo '<pre><code>'.print_r($this , 1).'</code></pre>';
 	}

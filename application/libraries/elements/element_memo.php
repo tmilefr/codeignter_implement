@@ -5,7 +5,7 @@
  * 
  */
 
-class element_memo
+class element_memo extends element
 {
 	protected $mode; //view, form.
 	protected $name   	= null; //unique id ?
@@ -21,7 +21,7 @@ class element_memo
 		if ($this->disabled)
 			$txt = '<input type="hidden" name="'.$this->name.'" value="'.$this->value.'"><input class="form-control" type="text" value="'.$this->Render().'" readonly>';
 		else
-			$txt = $this->CI->bootstrap_tools->textarea($this->name,  $this->value, $this->CI->lang->line($this->name), $this->required, $this->rows);
+			$txt = $this->RenderTools->textarea($this->name,  $this->value, Lang($this->name), $this->required, $this->rows);
 		return $txt;
 	}
 	
@@ -29,25 +29,6 @@ class element_memo
 		return nl2br($this->value);
 	}
 
-	/**
-	 * Constructor of class element.
-	 * @return void
-	 */
-	public function __construct()
-	{
-		$this->CI =& get_instance();
-	}
-
-	/**
-	 * Destructor of class element.
-	 * @return void
-	 */
-	public function __destruct()
-	{
-		unset($this->CI);
-		//echo '<pre><code>'.print_r($this , 1).'</code></pre>';
-	}
-	
 	/**
 	 * Generic set
 	 * @return void

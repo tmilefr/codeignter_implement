@@ -5,7 +5,6 @@
  * 
  */
 
-require_once(APPPATH.'libraries/elements/element.php');
 
 class element_file extends element
 {	

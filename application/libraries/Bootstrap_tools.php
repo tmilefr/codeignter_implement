@@ -2,14 +2,30 @@
 defined('BASEPATH') || exit('No direct script access allowed');
 Class Bootstrap_tools{
 
-	protected $CI = null; //base controller 
-
 	protected $_head = array();
+	protected $_controller_name = '';
 	protected $_asset_img = '/assets/img/';
+	
+	private static $instance;
+
+	/**
+	 * Get the Bootstrap_tools singleton
+	 *
+	 * @static
+	 * @return	object
+	 */
+	public static function &get_instance()
+	{
+		return self::$instance;
+	}
 
 
 	public function __construct(){
-		$this->CI =& get_instance();
+
+		self::$instance =& $this;
+
+		//echo print_r(self::$instance, TRUE).' <br/>';
+
 		$this->_SetHead('assets/js/jquery-3.3.1.min.js','js');
 		$this->_SetHead('assets/js/app.js','js');
 		$this->_SetHead('assets/vendor/bootstrap/js/bootstrap.bundle.js','js');
@@ -51,6 +67,75 @@ Class Bootstrap_tools{
 		return '<img src="'.base_url().$this->_asset_img.$file.'" alt="'.$alt.'">';
 	}
 
+	function GetDesign($type = ""){
+		$design = new Stdclass();
+		switch($type){
+			case 'M':
+				$design->color = 'nicdark_bg_blue';
+			break;
+			case 'L':
+				$design->color = 'nicdark_bg_violet';
+			break;
+			case 'MEN':
+				$design->color = 'nicdark_bg_blue';
+				$design->bordercolor ='nicdark_border_blue';
+				$design->backhover = 'nicdark_bg_bluedark_hover';
+				$design->img = 'events/nettoyage.jpg';
+				$design->btn = 'nicdark_bg_green';
+				$design->title = 'Session de ménage';				
+			break;
+			case 'INF':
+				$design->color = 'nicdark_bg_blue';
+				$design->bordercolor ='nicdark_border_blue';
+				$design->backhover = 'nicdark_bg_bluedark_hover';
+				$design->img = 'events/nettoyage.jpg';
+				$design->btn = 'nicdark_bg_green';
+				$design->title = 'Session Informatique';				
+			break;			
+			case 'TRA':
+				$design->color =  'nicdark_bg_red';
+				$design->bordercolor ='nicdark_border_red';
+				$design->backhover = 'nicdark_bg_reddark_hover';
+				$design->img = 'events/travaux.jpg';
+				$design->btn = 'nicdark_bg_orange';
+				$design->title = 'Session de travaux';	
+			break;
+			case 'GOU':
+				$design->color =  'nicdark_bg_orange';
+				$design->bordercolor ='nicdark_border_orange';
+				$design->backhover = 'nicdark_bg_orangedark_hover';
+				$design->img = 'events/gouter.jpg';
+				$design->btn = 'nicdark_bg_red';
+				$design->title = 'Session Goûter';	
+			break;
+			case 'LAV':
+				$design->color =  'nicdark_bg_violet';
+				$design->bordercolor ='nicdark_border_violet';
+				$design->backhover = 'nicdark_bg_violetdark_hover';
+				$design->img = 'events/lavage.jpg';
+				$design->btn = 'nicdark_bg_green';
+				$design->title = 'Session de lavage';	
+			break;
+			case 'DEC':
+				$design->color =  'nicdark_bg_green';
+				$design->bordercolor ='nicdark_border_green';
+				$design->backhover = 'nicdark_bg_greendark_hover';
+				$design->img = 'events/dechetterie.jpg';
+				$design->btn = 'nicdark_bg_blue';
+				$design->title = 'Session de déchetterie';	
+			break;					
+			default:
+				$design->color =  'nicdark_bg_blue';
+				$design->bordercolor ='nicdark_border_blue';
+				$design->backhover = 'nicdark_bg_bluedark_hover';
+				$design->img = 'events/img5.jpg';
+				$design->btn = 'nicdark_bg_green';
+				$design->title = 'Session';	
+		}
+		return $design;
+	}
+
+
 	function RenderAttachFiles($opt = 'js'){
 		if (isset($this->_head[$opt])){
 			foreach($this->_head[$opt] AS $file){
@@ -76,7 +161,7 @@ Class Bootstrap_tools{
 		if (count($head)){
 			$table .= '<head><tr>';
 			foreach($head AS $scope=>$name){
-				$table .= '<th scope="'.$scope.'">'.$this->CI->lang->line($name).'</th>';
+				$table .= '<th scope="'.$scope.'">'.Lang($name).'</th>';
 			}
 			$table .= '</tr></head>';
 		}
@@ -122,10 +207,10 @@ Class Bootstrap_tools{
 			<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" id="navbarDropdownFrom" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
 				foreach($values AS $key => $value){
-					$string_render_dropdown .= '<a class="dropdown-item" href="'.$url.'/filter/'.$field.'/filter_value/'.$key.'">'.$this->CI->lang->line($value).'</a>';
+					$string_render_dropdown .= '<a class="dropdown-item" href="'.$url.'/filter/'.$field.'/filter_value/'.$key.'">'.Lang($value).'</a>';
 				}
-				$string_render_dropdown .= '<a class="dropdown-item" href="'.$url.'/filter/'.$field.'/filter_value/all">'.$this->CI->lang->line('All').'</a>';
-				$string_render_dropdown .= '<a class="dropdown-item" href="'.$url.'/filter/'.$field.'/filter_value/'.$null_value.'">'.$this->CI->lang->line('N/A').'</a>';
+				$string_render_dropdown .= '<a class="dropdown-item" href="'.$url.'/filter/'.$field.'/filter_value/all">'.Lang('All').'</a>';
+				$string_render_dropdown .= '<a class="dropdown-item" href="'.$url.'/filter/'.$field.'/filter_value/'.$null_value.'">'.Lang('N/A').'</a>';
 			$string_render_dropdown .= '</div></ul>';
 		}
 		return $string_render_dropdown;
@@ -144,11 +229,11 @@ Class Bootstrap_tools{
 	}
 	
 	public function render_head_link($field, $direction, $url, $add_string ){
-		return '<a class="nav-link " href="'.$url.'/order/'.$field.'/direction/'.(($direction == 'desc') ? 'asc':'desc').'">'.$this->CI->lang->line($field).' '.$add_string.'</a>';
+		return '<a class="nav-link " href="'.$url.'/order/'.$field.'/direction/'.(($direction == 'desc') ? 'asc':'desc').'">'.Lang($field).' '.$add_string.'</a>';
 	}
 
 	public function label($name){
-		return '<label for="input'.$name.'">'.$this->CI->lang->line($name).'</label>';
+		return '<label for="input'.$name.'">'.Lang($name).'</label>';
 	}
 	
 	public function textarea($field, $value, $message = '', $required = false,$rows = 10){

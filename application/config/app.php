@@ -12,8 +12,8 @@ $config['crlf'] = '';
 
 /* EMAIL */
 $config['protocol'] = "smtp";
-$config['smtp_host'] = "smtp.1and1.com";
-$config['smtp_port'] = "587";
+$config['smtp_host'] = "localhost";
+$config['smtp_port'] = "25";
 $config['smtp_user'] = "noreply@domain.com";
 $config['smtp_pass'] = "noreply";
 $config['smtp_crypto'] = 'tls';

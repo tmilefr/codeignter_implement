@@ -4,18 +4,22 @@
  * Date Object in page
  * 
  */
-require_once(APPPATH.'libraries/elements/element.php');
 
 class element_time extends element
 {	
 	
+	protected $minTime;
+	protected $maxHour;
+	protected $maxMinutes;
+	protected $startTime;
+	
 
 	public function __construct(){
 		parent::__construct();
-		if (isset($this->CI->bootstrap_tools))
+		if (isset($this->RenderTools))
 		{
-			$this->CI->bootstrap_tools->_SetHead('assets/vendor/jquery-timepicker/jquery.timepicker.js','js');
-			$this->CI->bootstrap_tools->_SetHead('assets/vendor/jquery-timepicker/jquery.timepicker.css','css');		
+			$this->RenderTools->_SetHead('assets/vendor/jquery-timepicker/jquery.timepicker.js','js');
+			$this->RenderTools->_SetHead('assets/vendor/jquery-timepicker/jquery.timepicker.css','css');		
 		}
 	}
 
@@ -31,8 +35,8 @@ class element_time extends element
 			});
 		</script>";
 
-		$this->CI->bootstrap_tools->_SetHead($js , 'txt');		
-		return $this->CI->bootstrap_tools->input_time($this->GetName(),$this->value,$this->datatarget);
+		$this->RenderTools->_SetHead($js , 'txt');		
+		return $this->RenderTools->input_time($this->GetName(),$this->value,$this->datatarget);
 	}
 
 }

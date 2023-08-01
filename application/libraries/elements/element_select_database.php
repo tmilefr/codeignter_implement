@@ -4,7 +4,6 @@
  * SELECT Object in page
  * 
  */
-require_once(APPPATH.'libraries/elements/element.php');
 
 class element_select_database extends element
 {
@@ -20,7 +19,7 @@ class element_select_database extends element
 		if ($this->disabled)
 			$txt = '<input type="hidden" name="'.$this->name.'" value="'.$this->value.'"><input class="form-control" type="text" value="'.$this->Render().'" readonly>';
 		else
-			$txt = $this->CI->bootstrap_tools->input_select($this->name, $this->values, $this->value);
+			$txt = $this->RenderTools->input_select($this->name, $this->values, $this->value);
 		return $txt;
 	}
 

@@ -49,11 +49,17 @@ class Migration_setup extends CI_Migration {
         
         public function up()
         {		
-			$this->Make('Subscription');
-			$this->Make('Service');
-			$this->Make('Taux');
+			$this->Make('Family');
+			$this->Make('Sendmail');
+			$this->Make('Sendmail_statut');
 			$this->Make('Users');
-			$this->Make('Contribution');
+			$this->Make('Acl_actions');
+			$this->Make('Acl_controllers');
+			$this->Make('Acl_roles');
+			$this->Make('Acl_roles');
+			$this->Make('Acl_roles_controllers');
+			$this->Make('Acl_users');
+			$this->Make('Options');
 	    }
 
 		public function Make($name){
