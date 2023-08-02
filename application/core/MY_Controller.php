@@ -68,7 +68,7 @@ class MY_Controller extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->helper('tools');
-		$this->load->library('Render_object');
+		$this->load->library('Render_Object');
 
 		$this->bootstrap_tools = Bootstrap_tools::get_instance(); //need to change $this->load method for singleton loading
 
@@ -447,7 +447,7 @@ class MY_Controller extends CI_Controller {
 		} else{
 			$fields = $this->{$model_name}->_get('autorized_fields');
 		}
-		$this->Render_Object->_set('post_data', $this->input->post());
+		$this->render_object->_set('post_data', $this->input->post());
 		foreach($fields AS $field){
 			if (method_exists($this->{$model_name}->_get('defs')[$field],'PrepareForDBA')){
 				$datas[$field] 	= $this->{$model_name}->_get('defs')[$field]->PrepareForDBA($this->input->post($field));

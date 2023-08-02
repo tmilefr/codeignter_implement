@@ -13,7 +13,22 @@ if ( ! function_exists('PassWordGenerator'))
 if ( ! function_exists('debug'))
 {
 	function debug($inc,$line = null){
-		return $line.' <pre><code>'.print_r($inc, TRUE).'</code></pre>';
+		return '<div class="offset-1">'.$line.' <pre><code>'.print_r($inc, TRUE).'</code></pre></div>';
+	}
+}
+
+if ( ! function_exists('Compare'))
+{
+	function Compare($type,$in1 = null, $in2 = null){
+		switch($type){
+			case 'date':
+				$origin = new DateTimeImmutable($in1); //2009-10-13
+				$target = new DateTimeImmutable($in2);
+				$interval = $origin->diff($target);
+				return $interval->format('%R%a');
+			break;
+		}
+		return false;
 	}
 }
 

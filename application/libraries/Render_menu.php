@@ -93,7 +93,7 @@ Class Render_menu{
 					if (count($def_menu->items)){
 						$menu = '<li class="nav-item dropdown">';
 						$menu .= '<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="oi '.$def_menu->icon.'"></span></a>';
-						$menu .= '<div class="dropdown-menu">';
+						$menu .= '<div class="dropdown-menu dropdown-menu-right">';
 						foreach($def_menu->items AS $element){
 							switch($element->type){
 								case "link":

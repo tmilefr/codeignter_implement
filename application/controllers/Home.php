@@ -63,9 +63,7 @@ class Home extends MY_Controller {
 	//gestion de mon compte 
 	public function myaccount(){
 		//compte de type admin
-		if ($this->acl->getType()  == "sys"){
-			redirect('Acl_users_controller/edit/'.$this->acl->getUserId());
-		}
+		redirect('Acl_users_controller/edit/'.$this->acl->getUserId());
 	}
 
 	

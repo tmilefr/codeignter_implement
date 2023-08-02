@@ -21,20 +21,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	</a>
 	<div class="collapse navbar-collapse" id="navbarNavDropdown">
 		<ul class="navbar-nav ml-auto">
-	
-			<?php echo $this->render_menu->Get('sysmenu');?>
-			<?php echo $this->render_menu->Get('optionmenu');?>	
-			<?php if ($this->session->userdata('usercheck') || $this->acl->_get('DontCheck')  ) { ?>
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo (($this->session->userdata('usercheck')) ? $this->session->userdata('usercheck')->name:''); ?></span>
-				</a>
-				<!-- Dropdown - User Information -->
-				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-					<a class="dropdown-item" href="<?php echo base_url('Home/logout');?>"><span class="oi oi-account-logout"></span> <?php echo Lang('Login_out');?></a>
-				</div>
+			<li>
+				<!-- search box => todo -->
+				<?php
+				if ($search_object->autorize){
+					$attributes = array('class' => 'form-inline', 'id' => 'myform');
+					echo form_open($search_object->url, $attributes);?>
+					<input class="form-control mr-sm-2" type="search" name='global_search' id='global_search' placeholder="Search" aria-label="Search" value="<?php echo $search_object->global_search;?>">
+					<button class="btn btn-success btn-sm" type="submit"><span class="oi oi-magnifying-glass"></span></button>&nbsp;
+					<?php if ($search_object->global_search){ ?>
+						<a href='<?php echo base_url($search_object->url);?>/search/reset' class='btn btn-warning btn-sm'><span class="oi oi-circle-x"></span></a>
+					<?php } ?>
+					</form>
+					<?php
+				}
+				?>
 			</li>
-			<?php } ?>
+			<?php echo $this->render_menu->Get('sysmenu');?>						
+			<?php echo $this->render_menu->Get('optionmenu');?>	
+			<?php if ( $this->acl->Islog() ) { ?>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $this->acl->GetUserName(); ?></span>
+					</a>
+					<!-- Dropdown - User Information -->
+					<div class="dropdown-menu dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+						<a class="dropdown-item" href="<?php echo base_url('Home/myaccount');?>"><span class="oi oi-person"></span> <?php echo Lang('Myaccount');?></a>
+						<a class="dropdown-item" href="<?php echo base_url('Home/logout');?>"><span class="oi oi-account-logout"></span> <?php echo Lang('Login_out');?></a>
+					</div>
+				
+				</li>
+			<?php } ?>	
 		</ul>
 		<?php
 		if ($search_object->autorize){

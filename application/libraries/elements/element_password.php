@@ -40,11 +40,9 @@ class element_password extends element
 	}
 
 	public function PrepareForDBA($value){
-		echo debug($this->CI->render_object->_get('post_data'));
-
-		die();
-		//en edition, le mot de passe est déjà crypt ...
-		if($this->change_password == "change_password"){
+		$post_data = $this->render_object->_get('post_data');
+		//en edition, le mot de passe est déjà chiffré ...
+		if($post_data[$this->name.'_check'] == "change_password"){
 			return crypt($value, PASSWORD_SALT);
 		} else {
 			return $value;

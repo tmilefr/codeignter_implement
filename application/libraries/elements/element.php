@@ -23,12 +23,9 @@ class element
 	protected $overridename = '';
 	protected $datatarget = '';
 	protected $change 	= '';
+	protected $RenderTools = null; //appel de l'objet sans passer par le controller. TODO : implementation de cet approche.
 	protected $_controller_name = '';
-
-	/* Singleton for sharing with CI */
-	public $RenderTools = null; 
-	public $render_object = null;
-
+	
 	public function SetMultiple($action = 'FALSE'){
 		$this->name = str_replace(['[',']'],['',''], $this->name);
 		$this->mutliple = $action;

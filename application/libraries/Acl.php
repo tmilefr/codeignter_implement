@@ -16,11 +16,11 @@ if (! defined('BASEPATH'))
 class Acl
 {
     protected $CI;
-    protected $controller   = NULL;
-    protected $action       = NULL;
-    protected $permissions  = [];
+    protected $controller = NULL;
+    protected $action = NULL;
+    protected $permissions = [];
     /* BYPASS */
-    protected $guestPages   = [
+    protected $guestPages = [
         'home/logout',
         'home/login',
         'home/no_right',
@@ -37,7 +37,7 @@ class Acl
         'api'
     ];
     protected $ApiAsk       = FALSE;
-    protected $DontCheck    = TRUE;
+    protected $DontCheck    = FALSE;
     protected $_debug       = FALSE;
     protected $_debug_array = [];
     protected $usercheck    = NULL; //TODO : replace $usercheck 
