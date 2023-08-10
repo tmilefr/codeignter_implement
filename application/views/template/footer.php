@@ -1,5 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
-			<!-- footer bar -->
+
+	</div>
+	<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+		<div class="col-md-4 d-flex align-items-center">
 			<nav class="navbar navbar-expand-lg navbar-light bg-light"> 
 				<ul class="navbar-nav mr-auto"> 
 					<li class="nav-item">
@@ -15,13 +18,11 @@
 					<?php echo $footer_line;?>
 					</li> 
 				</ul>
-				<span class="navbar-text">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></span>
 			</nav>
-
-			<?php //echo $this->_render_debug(); ?>
-
+			<span class="mb-3 mb-md-0 text-body-secondary">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></span>
 		</div>
-	</div>
+	</footer>
+
 
 	<!-- Modal -->
 	<div class="modal fade" id="AboutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
