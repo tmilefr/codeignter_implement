@@ -19,6 +19,8 @@ class Users_controller extends MY_Controller {
 		$this->_list_view		= 'unique/Users_view.php';
 		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true);
 		$this->title .= ' - '.$this->lang->line($this->_controller_name);
+		$this->_search 			= true;
+		
 		$this->init();
 	}
 

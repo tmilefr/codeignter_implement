@@ -34,7 +34,7 @@ Class Render_menu{
 		//echo debug($this->def_menus);
 	}
 
-	function Get($position, $mode = null){
+	function Get($position, $name = null){
 		if (isset($this->def_menus[$position])){
 			$def_menu = $this->def_menus[$position];
 			$have_right = false;
@@ -64,52 +64,45 @@ Class Render_menu{
 					}
 				break;
 				case 'link':
-					$menu = '<nav class="navbar navbar-dark bg-dark">';
-					$menu .= '<ul class="navbar-nav mr-auto">';
 					foreach($def_menu->items AS $element){
 						switch($element->type){
 							case "link":
 								if ($this->CI->acl->hasAccess(strtolower($element->url))){
 									$have_right = true; 
-									$menu .= '<li class="nav-item">
-									<a class="nav-link" href="'.base_url($element->url).'">
-									<div class="d-flex w-100 justify-content-start align-items-center">
-									<span class="oi '.$element->icon.'"></span> 
-									<span class="collapse-text menu-collapsed">'.Lang($element->name).'</span>
-									</div></a>
-									</li>';
+									$menu .= '<a class="nav-link" href="'.base_url($element->url).'">'.Lang($element->name).'</a>';
 								} else {
 									$this->CI->_debug(strtolower($element->url.':FALSE'));
 								}
 							break;
 							case "divider":
-								$menu .= '<div class="dropdown-divider"></div>';
+								$menu .= '<li><div class="dropdown-divider"></div></li>';
 							break;
 						}
 					}
-					$menu .= '</ul></nav>';
 				break;
 				case 'dropdown':
-					if (count($def_menu->items)){
-						$menu = '<li class="nav-item dropdown">';
-						$menu .= '<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="oi '.$def_menu->icon.'"></span></a>';
-						$menu .= '<div class="dropdown-menu dropdown-menu-right">';
+					if (!$name)
+						$name = '<span class="oi '.$def_menu->icon.'">';
+					if (count($def_menu->items) && $this->CI->acl->Islog()){
+						$menu = '<div class="dropdown">';
+						$menu .= '<a class="btn dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">'.$name.'</a>';
+						$menu .= '<div class="dropdown-menu">';
 						foreach($def_menu->items AS $element){
 							switch($element->type){
 								case "link":
 									if ($this->CI->acl->hasAccess(strtolower($element->url))){ 
 										$have_right = true;
-										$menu .= '<a class="dropdown-item" href="'.base_url($element->url).'">'.Lang($element->name).'</a>';
+										$menu .= '<a class="dropdown-item" href="'.base_url($element->url).'">'.((isset($element->icon)) ? '<span class="oi '.$element->icon.'"></span>':'').Lang($element->name).'</a>';
 									} else {
 										$this->CI->_debug(strtolower($element->url.':FALSE'));
 									}
 								break;
 								case "divider":
-									$menu .= '<div class="dropdown-divider"></div>';
+									$menu .= '<hr class="dropdown-divider">';
 								break;
 							}
 						}
-						$menu .= '</div></li>';
+						$menu .= '</div>';
 					}
 				break;
 			}

@@ -20,6 +20,22 @@
 			}
 		]
 	},
+	"usermenu":{
+		"type": "dropdown",
+		"icon": "oi-key",
+		"items":[
+			{
+				"url":"Home/myaccount",
+				"name":"Myaccount",
+				"type":"link"
+			},
+			{
+				"url":"Home/logout",
+				"name":"Login_out",
+				"type":"link"
+			}
+		]
+	},
 	"optionmenu":{
 		"type": "dropdown",
 		"icon": "oi-cog",
@@ -40,9 +56,15 @@
 		]
 	},
 	"leftmenu":{
-		"type": "link",
+		"type": "dropdown",
 		"icon": "oi-key",		
 		"items":[
+			{
+				"url":"Home/index",
+				"name":"Home_controller",
+				"icon":"oi-home",
+				"type":"link"
+			},
 			{
 				"url":"Users_controller/list",
 				"name":"Users_controller",

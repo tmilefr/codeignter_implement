@@ -26,18 +26,16 @@ Class Bootstrap_tools{
 
 		//echo print_r(self::$instance, TRUE).' <br/>';
 
-		$this->_SetHead('assets/js/jquery-3.3.1.min.js','js');
+		$this->_SetHead('assets/vendor/jquery-3.3.1.min.js','js');
 		$this->_SetHead('assets/js/app.js','js');
-		$this->_SetHead('assets/vendor/bootstrap/js/bootstrap.bundle.js','js');
+		$this->_SetHead('assets/vendor/bootstrap/js/bootstrap.bundle.min.js','js');
 
 		$this->_SetHead('assets/vendor/bootstrap/css/bootstrap.min.css','css');
 		$this->_SetHead('assets/vendor/open-iconic/css/open-iconic-bootstrap.css','css');
 		$this->_SetHead('assets/css/app.css','css');
 
-		$this->_SetHead('assets/css/nicdark_style.css','css');
-		$this->_SetHead('assets/css/nicdark_responsive.css','css');
 		// menu 4 mobile
-		$this->_SetHead('assets/js/plugins/menu/tinynav.min.js','js');
+		$this->_SetHead('assets/plugins/js/tinynav.min.js','js');
 
 		// google fonts
 		$this->_SetHead('http'.((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 's':'').'://fonts.googleapis.com/css?family=Montserrat:400,700','font');//font-family: 'Montserrat', sans-serif;

@@ -26,9 +26,9 @@
 			foreach($ctrl->actions AS $action){ 
 				?>
 				<td>
-				<div class="custom-control custom-switch form-check-inline">
-					<input type="checkbox" <?php echo (($action->allow ) ? 'checked="checked"':'');?> class="custom-control-input" name="rules[]" id="customSwitch<?php echo $ctrl->id.'_'.$action->id;?>" value="<?php echo $ctrl->id.'_'.$action->id;?>">
-					<label class="custom-control-label" for="customSwitch<?php echo $ctrl->id.'_'.$action->id;?>"><?php echo $action->action;?></label>
+				<div class="form-check form-switch form-check-inline">
+					<input type="checkbox" <?php echo (($action->allow ) ? 'checked="checked"':'');?> class="form-check-input" name="rules[]" id="customSwitch<?php echo $ctrl->id.'_'.$action->id;?>" value="<?php echo $ctrl->id.'_'.$action->id;?>">
+					<label class="form-check-label" for="customSwitch<?php echo $ctrl->id.'_'.$action->id;?>"><?php echo $action->action;?></label>
 				</div>
 				</td>
 			<?php 
