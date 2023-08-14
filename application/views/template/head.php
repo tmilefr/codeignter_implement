@@ -52,13 +52,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </header>
     
     <div class="container-fluid">
-		<h2><?php echo $title;?></h2> 
-		<?php  
-			if ($this->render_object->_get('_ui_rules') AND !$this->render_object->_get('form_mod')){  
-				foreach($this->render_object->_get('_ui_rules') AS $rule){
-					if (in_array($rule->term , $this->render_object->_get('_not_link_list')) AND $rule->autorize ){
-						echo '<a class="btn btn-sm '.$this->lang->line($rule->term.'_class').'" href="'.$rule->url.'"><span class="'.$rule->icon.'"></span> '.$rule->name.'</a>&nbsp;';
+
+		<div class="row">
+			<div class="col-auto mr-auto">
+				<h2><?php echo $title;?></h2> 
+			</div>
+			<div class="col-auto">
+				<?php  
+				if ($this->render_object->_get('_ui_rules') AND !$this->render_object->_get('form_mod')){  
+					foreach($this->render_object->_get('_ui_rules') AS $rule){
+						if (in_array($rule->term , $this->render_object->_get('_not_link_list')) AND $rule->autorize ){
+							echo '<a class="btn btn-sm '.$this->lang->line($rule->term.'_class').'" href="'.$rule->url.'"><span class="'.$rule->icon.'"></span> '.$rule->name.'</a>&nbsp;';
+						}
 					}
-				}
-			} 
-			?>
+				} 
+				?>
+			</div>
+		</div>

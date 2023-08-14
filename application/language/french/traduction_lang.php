@@ -72,7 +72,22 @@ $lang['LIST_Order_controller'] = 'Liste';
 
 $lang['Reseller_controller_edit'] = 'Edition d\'un fournisseur';
 
+$lang['AddRow'] = 'Ajouter une ligne';
+$lang['RemoveRow'] = 'Supprimer la ligne';
+$lang['actions_AddRow'] = 'Cliqué ici pour ajouter une ligne';
+$lang['Acl_controllers_controller_edit'] = 'Edition d\'un controlleur';
+$lang['GESTION_Acl_controllers_controller'] = 'Gestion des controlleurs';
+$lang['controller'] = 'Contrôleur';
+$lang['actions'] = 'Actions';
 
+
+$lang['GESTION_Options_controller'] = 'Gestion des options';
+$lang['id'] = 'Id';
+$lang['cle'] = 'Clé';
+$lang['value'] = 'Valeur';
+$lang['filter'] = 'Filtre';
+$lang['Options_controller_add'] = 'Ajouter une option';
+$lang['Options_controller_edit'] = 'Modifer une option';
 
 
 $lang['mois_1'] = 'Janvier';

@@ -21,7 +21,7 @@ class Family_controller extends MY_Controller {
 		$this->_autorize 		= array('add'=>true,'edit'=>true,'list'=>true,'delete'=>true,'view'=>true);
 		$this->_search 			= true;
 		
-		$this->title .= ' - '.$this->lang->line($this->_controller_name);
+		$this->title .=  $this->lang->line('GESTION_'.$this->_controller_name);
 		
 		$this->_set('_debug', FALSE);
 		$this->init();

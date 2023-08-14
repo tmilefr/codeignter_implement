@@ -4,7 +4,7 @@
 	</div>
 	<div class="card-body">
 		<?php 
-		echo form_open('Acl_roles_controller/set_rules/'.$id, array('class' => '', 'id' => 'edit') , array('form_mod'=>'roles','id'=>$id) );
+		echo form_open($this->render_object->_getCi('_controller_name').'/set_rules/'.$id, array('class' => '', 'id' => 'edit') , array('form_mod'=>'roles','id'=>$id) );
 		?>
 		<table class="table table-striped table-sm">
 		<thead>
@@ -26,9 +26,9 @@
 			foreach($ctrl->actions AS $action){ 
 				?>
 				<td>
-				<div class="form-check form-switch form-check-inline">
-					<input type="checkbox" <?php echo (($action->allow ) ? 'checked="checked"':'');?> class="form-check-input" name="rules[]" id="customSwitch<?php echo $ctrl->id.'_'.$action->id;?>" value="<?php echo $ctrl->id.'_'.$action->id;?>">
-					<label class="form-check-label" for="customSwitch<?php echo $ctrl->id.'_'.$action->id;?>"><?php echo $action->action;?></label>
+				<div class="custom-control custom-switch">
+					<input type="checkbox" <?php echo (($action->allow ) ? 'checked="checked"':'');?> class="custom-control-input" name="rules[]" id="customSwitch<?php echo $ctrl->id.'_'.$action->id;?>" value="<?php echo $ctrl->id.'_'.$action->id;?>">
+					<label class="custom-control-label" for="customSwitch<?php echo $ctrl->id.'_'.$action->id;?>"><?php echo $action->action;?></label>
 				</div>
 				</td>
 			<?php 
@@ -40,7 +40,9 @@
 		?>
 		</tbody>
 		</table>
-		<button type="submit" class="btn btn-primary"><?php echo $this->lang->line('VALIDER');?></button>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-primary"><?php echo Lang('valid');?></button>
+		</div>
 		<?php
 			echo form_close();
 		?>
